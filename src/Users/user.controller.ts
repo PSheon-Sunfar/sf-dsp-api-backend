@@ -1,4 +1,4 @@
-import { Roles } from './../Auth/decorators/roles.decorator';
+import { Roles } from '../Auth/decorators/roles.decorator';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { CreateForgotPasswordDto } from './dto/create-forgot-password.dto';
 import { Request } from 'express';

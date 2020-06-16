@@ -1,4 +1,4 @@
-name: SF-QUIZ-GAME-2020-API-TEST
+name: API-TEST
 
 on:
   push:
