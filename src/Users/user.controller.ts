@@ -1,4 +1,4 @@
-import { Roles } from './../auth/decorators/roles.decorator';
+import { Roles } from './../Auth/decorators/roles.decorator';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { CreateForgotPasswordDto } from './dto/create-forgot-password.dto';
 import { Request } from 'express';
@@ -16,7 +16,7 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { VerifyUuidDto } from './dto/verify-uuid.dto';
 import { UserService } from './user.service';
-import { AuthGuard, PassportModule } from '@nestjs/passport';
+import { AuthGuard } from '@nestjs/passport';
 import { RefreshAccessTokenDto } from './dto/refresh-access-token.dto';
 import {
   ApiCreatedResponse,
@@ -26,7 +26,7 @@ import {
   ApiHeader,
   ApiOperation,
 } from '@nestjs/swagger';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { RolesGuard } from 'src/Auth/guards/roles.guard';
 
 @ApiTags('User')
 @Controller('user')
@@ -34,9 +34,6 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // ╔═╗╦ ╦╔╦╗╦ ╦╔═╗╔╗╔╔╦╗╦╔═╗╔═╗╔╦╗╔═╗
-  // ╠═╣║ ║ ║ ╠═╣║╣ ║║║ ║ ║║  ╠═╣ ║ ║╣
-  // ╩ ╩╚═╝ ╩ ╩ ╩╚═╝╝╚╝ ╩ ╩╚═╝╩ ╩ ╩ ╚═╝
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Register user' })

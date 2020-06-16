@@ -1,6 +1,6 @@
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { Request } from 'express';
-import { AuthService } from './../auth/auth.service';
+import { AuthService } from './../Auth/auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import {
   Injectable,

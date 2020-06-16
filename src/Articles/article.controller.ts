@@ -23,8 +23,8 @@ import { AuthGuard } from '@nestjs/passport';
 
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from './../auth/decorators/roles.decorator';
+import { RolesGuard } from 'src/Auth/guards/roles.guard';
+import { Roles } from './../Auth/decorators/roles.decorator';
 
 @ApiTags('Article')
 @Controller('article')

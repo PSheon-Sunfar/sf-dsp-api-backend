@@ -1,6 +1,6 @@
 import { JWT_SECRET, JWT_EXPIRATION } from 'config';
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from './Auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
