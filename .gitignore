@@ -10,6 +10,11 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+# Config
+config/development.js
+config/test.js
+config/production.js
+
 # Azure Functions
 local.settings.json
 
