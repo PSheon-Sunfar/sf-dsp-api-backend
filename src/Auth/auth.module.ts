@@ -1,26 +1,39 @@
-import { JWT_SECRET, JWT_EXPIRATION } from 'config';
 import { Module } from '@nestjs/common';
-import { AuthService } from './Auth.service';
-import { JwtStrategy } from './strategies/jwt.strategy';
-import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { MongooseModule } from '@nestjs/mongoose';
-import { UserSchema } from 'src/Users/schemas/user.schema';
-import { RefreshTokenSchema } from './schemas/refresh-token.schema';
+import { PassportModule } from '@nestjs/passport';
+import { ConfigModule } from '../config/config.module';
+import { ConfigService } from '../config/config.service';
+import { ProfileModule } from '../profile/profile.module';
+import { AuthService } from './auth.service';
+import { JwtStrategy } from './jwt.strategy';
+import { AuthController } from './auth.controller';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: 'User', schema: UserSchema },
-      { name: 'RefreshToken', schema: RefreshTokenSchema },
-    ]),
-    PassportModule,
-    JwtModule.register({
-      secret: JWT_SECRET,
-      signOptions: { expiresIn: JWT_EXPIRATION },
+    ProfileModule,
+    ConfigModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        return {
+          secret: configService.get('WEBTOKEN_SECRET_KEY'),
+          signOptions: {
+            ...(configService.get('WEBTOKEN_EXPIRATION_TIME')
+              ? {
+                  expiresIn: Number(
+                    configService.get('WEBTOKEN_EXPIRATION_TIME'),
+                  ),
+                }
+              : {}),
+          },
+        };
+      },
+      inject: [ConfigService],
     }),
   ],
+  controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
-  exports: [AuthService],
+  exports: [PassportModule.register({ defaultStrategy: 'jwt' })],
 })
 export class AuthModule {}

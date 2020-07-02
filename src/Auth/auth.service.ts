@@ -1,125 +1,101 @@
-import { ENCRYPT_JWT_SECRET, JWT_SECRET, JWT_EXPIRATION } from 'config';
-import { JwtPayload } from './interfaces/jwt-payload.interface';
-import {
-  Injectable,
-  UnauthorizedException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { sign } from 'jsonwebtoken';
-import { User } from 'src/Users/interfaces/user.interface';
-import { RefreshToken } from './interfaces/refresh-token.interface';
-import { v4 } from 'uuid';
-import { Request } from 'express';
-import { getClientIp } from 'request-ip';
-import * as Cryptr from 'cryptr';
+import { ConfigService } from '../config/config.service';
+import { ProfileService } from '../profile/profile.service';
+import { IProfile } from '../profile/profile.model';
+import { LoginDto } from './dto/login.dto';
 
+/**
+ * Models a typical Login/Register route return body
+ */
+export interface ITokenReturnBody {
+  /**
+   * When the token is to expire in seconds
+   */
+  expires: string;
+  /**
+   * A human-readable format of expires
+   */
+  expiresPrettyPrint: string;
+  /**
+   * The Bearer token
+   */
+  token: string;
+}
+
+/**
+ * Authentication Service
+ */
 @Injectable()
 export class AuthService {
-  cryptr: any;
+  /**
+   * Time in seconds when the token is to expire
+   * @type {string}
+   */
+  private readonly expiration: string;
 
+  /**
+   * Constructor
+   * @param {JwtService} jwtService jwt service
+   * @param {ConfigService} configService
+   * @param {ProfileService} profileService profile service
+   */
   constructor(
-    @InjectModel('User') private readonly userModel: Model<User>,
-    @InjectModel('RefreshToken')
-    private readonly refreshTokenModel: Model<RefreshToken>,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+    private readonly profileService: ProfileService,
   ) {
-    this.cryptr = new Cryptr(ENCRYPT_JWT_SECRET);
+    this.expiration = this.configService.get('WEBTOKEN_EXPIRATION_TIME');
   }
 
-  async createAccessToken(userId: string) {
-    // const accessToken = this.jwtService.sign({userId});
-    const accessToken = sign({ userId }, JWT_SECRET, {
-      expiresIn: JWT_EXPIRATION,
-    });
-    return this.encryptText(accessToken);
+  /**
+   * Creates a signed jwt token based on IProfile dto
+   * @param {Profile} param dto to generate token from
+   * @returns {Promise<ITokenReturnBody>} token body
+   */
+  async createToken({
+    _id,
+    displayName,
+    email,
+  }: IProfile): Promise<ITokenReturnBody> {
+    return {
+      expires: this.expiration,
+      expiresPrettyPrint: AuthService.prettyPrintSeconds(this.expiration),
+      token: this.jwtService.sign({ _id, displayName, email }),
+    };
   }
 
-  async createRefreshToken(req: Request, userId) {
-    const refreshToken = new this.refreshTokenModel({
-      userId,
-      refreshToken: v4(),
-      ip: this.getIp(req),
-      browser: this.getBrowserInfo(req),
-      country: this.getCountry(req),
-    });
-    await refreshToken.save();
-    return refreshToken.refreshToken;
+  /**
+   * Formats the time in seconds into human-readable format
+   * @param {string} time
+   * @returns {string} hrf time
+   */
+  private static prettyPrintSeconds(time: string): string {
+    const ntime = Number(time);
+    const hours = Math.floor(ntime / 3600);
+    const minutes = Math.floor((ntime % 3600) / 60);
+    const seconds = Math.floor((ntime % 3600) % 60);
+
+    return `${hours > 0 ? hours + (hours === 1 ? ' hour,' : ' hours,') : ''} ${
+      minutes > 0 ? minutes + (minutes === 1 ? ' minute' : ' minutes') : ''
+    } ${seconds > 0 ? seconds + (seconds === 1 ? ' second' : ' seconds') : ''}`;
   }
 
-  async findRefreshToken(token: string) {
-    const refreshToken = await this.refreshTokenModel.findOne({
-      refreshToken: token,
-    });
-    if (!refreshToken) {
-      throw new UnauthorizedException('User has been logged out.');
-    }
-    return refreshToken.userId;
-  }
-
-  async validateUser(jwtPayload: JwtPayload): Promise<any> {
-    const user = await this.userModel.findOne({
-      _id: jwtPayload.userId,
-      verified: true,
-    });
+  /**
+   * Validates whether or not the profile exists in the database
+   * @param {LoginDto} loginDto login payload to authenticate with
+   * @returns {Promise<IProfile>} registered profile
+   */
+  async validateUser(loginDto: LoginDto): Promise<IProfile> {
+    const user = await this.profileService.getByEmailAndPass(
+      loginDto.email,
+      loginDto.password,
+    );
     if (!user) {
-      throw new UnauthorizedException('User not found.');
+      throw new UnauthorizedException(
+        'Could not authenticate. Please try again.',
+      );
     }
     return user;
-  }
-
-  //   ┬┬ ┬┌┬┐  ┌─┐─┐ ┬┌┬┐┬─┐┌─┐┌─┐┌┬┐┌─┐┬─┐
-  //   ││││ │   ├┤ ┌┴┬┘ │ ├┬┘├─┤│   │ │ │├┬┘
-  //  └┘└┴┘ ┴   └─┘┴ └─ ┴ ┴└─┴ ┴└─┘ ┴ └─┘┴└─
-  private jwtExtractor(request) {
-    let token = null;
-    if (request.header('x-token')) {
-      token = request.get('x-token');
-    } else if (request.headers.authorization) {
-      token = request.headers.authorization
-        .replace('Bearer ', '')
-        .replace(' ', '');
-    } else if (request.body.token) {
-      token = request.body.token.replace(' ', '');
-    }
-    if (request.query.token) {
-      token = request.body.token.replace(' ', '');
-    }
-    const cryptr = new Cryptr(ENCRYPT_JWT_SECRET);
-    if (token) {
-      try {
-        token = cryptr.decrypt(token);
-      } catch (err) {
-        throw new BadRequestException('Bad request.');
-      }
-    }
-    return token;
-  }
-
-  // ***********************
-  // ╔╦╗╔═╗╔╦╗╦ ╦╔═╗╔╦╗╔═╗
-  // ║║║║╣  ║ ╠═╣║ ║ ║║╚═╗
-  // ╩ ╩╚═╝ ╩ ╩ ╩╚═╝═╩╝╚═╝
-  // ***********************
-  returnJwtExtractor() {
-    return this.jwtExtractor;
-  }
-
-  getIp(req: Request): string {
-    return getClientIp(req);
-  }
-
-  getBrowserInfo(req: Request): string {
-    return req.header['user-agent'] || 'XX';
-  }
-
-  getCountry(req: Request): string {
-    return req.header['cf-ipcountry'] ? req.header['cf-ipcountry'] : 'XX';
-  }
-
-  encryptText(text: string): string {
-    return this.cryptr.encrypt(text);
   }
 }
