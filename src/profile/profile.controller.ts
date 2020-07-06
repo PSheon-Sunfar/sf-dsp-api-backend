@@ -114,21 +114,21 @@ export class ProfileController {
     return await this.profileService.editRole(payload);
   }
 
-  /**
-   * Removes a profile from the database
-   * @param {string} email the email to remove
-   * @returns {Promise<IGenericMessageBody>} whether or not the profile has been deleted
-   */
-  @Delete('profile/:email')
-  @UseGuards(AuthGuard('jwt'), ACGuard)
-  @UseRoles({
-    resource: 'profile',
-    action: 'delete',
-    possession: 'any',
-  })
-  @ApiResponse({ status: 200, description: 'Delete Profile Request Received' })
-  @ApiResponse({ status: 400, description: 'Delete Profile Request Failed' })
-  async delete(@Param('email') email: string): Promise<IGenericMessageBody> {
-    return await this.profileService.delete(email);
-  }
+  // /**
+  //  * Removes a profile from the database
+  //  * @param {string} email the email to remove
+  //  * @returns {Promise<IGenericMessageBody>} whether or not the profile has been deleted
+  //  */
+  // @Delete('profile/:email')
+  // @UseGuards(AuthGuard('jwt'), ACGuard)
+  // @UseRoles({
+  //   resource: 'profile',
+  //   action: 'delete',
+  //   possession: 'any',
+  // })
+  // @ApiResponse({ status: 200, description: 'Delete Profile Request Received' })
+  // @ApiResponse({ status: 400, description: 'Delete Profile Request Failed' })
+  // async delete(@Param('email') email: string): Promise<IGenericMessageBody> {
+  //   return await this.profileService.delete(email);
+  // }
 }

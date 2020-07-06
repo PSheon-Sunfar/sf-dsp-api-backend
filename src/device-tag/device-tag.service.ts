@@ -1,4 +1,4 @@
-import { Model, Schema } from 'mongoose';
+import { Model, Schema, PaginateResult } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   BadRequestException,
@@ -40,16 +40,16 @@ export class DeviceTagService {
    * @param {string} _id
    * @returns {Promise<IDeviceTag>} queried device tag data
    */
-  get(_id: string): Promise<IDeviceTag> {
+  get(_id: Schema.Types.ObjectId): Promise<IDeviceTag> {
     return this.deviceTagModel.findById(_id).exec();
   }
 
   /**
-   * Fetches a profile from database by UUID
+   * Fetches a device tag from database by UUID
    * @query {QueryDto} queryDto
-   * @returns {Promise<IProfile>} queried profile data
+   * @returns {PaginateResult<QueryDto>} queried device tag data
    */
-  async getItems(queryDto: QueryDto): Promise<any> {
+  async getItems(queryDto: QueryDto): Promise<PaginateResult<QueryDto> | any> {
     const condition = await db.checkQueryString(queryDto);
     return await db.getItems(queryDto, this.deviceTagModel, condition);
   }

@@ -3,11 +3,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 /**
- * Patch Device Tag DTO Class
+ * Patch Device DTO Class
  */
-export class PatchDeviceTagDto {
+export class PatchDeviceDto {
   /**
-   * _id field
+   * Display Name field
    */
   @ApiProperty({
     required: true,
@@ -17,7 +17,7 @@ export class PatchDeviceTagDto {
   _id: Schema.Types.ObjectId;
 
   /**
-   * Display Name field
+   * MAC Address field
    */
   @ApiProperty({
     required: true,

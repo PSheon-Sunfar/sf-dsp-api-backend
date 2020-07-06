@@ -9,6 +9,9 @@ import { ConfigService } from '../config/config.service';
 import { AuthModule } from '../auth/auth.module';
 import { ProfileModule } from '../profile/profile.module';
 import { DeviceTagModule } from '../device-tag/device-tag.module';
+import { ContentModule } from '../content/content.module';
+import { DeviceModule } from '../device/device.module';
+import { ScheduleModule } from '../schedule/schedule.module';
 import { WinstonModule } from '../winston/winston.module';
 import { AccessControlModule } from 'nest-access-control';
 import { roles } from './app.roles';
@@ -68,6 +71,9 @@ import { roles } from './app.roles';
     AuthModule,
     ProfileModule,
     DeviceTagModule,
+    ContentModule,
+    DeviceModule,
+    ScheduleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

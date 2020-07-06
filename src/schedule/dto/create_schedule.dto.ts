@@ -1,21 +1,11 @@
-import { Schema } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { ScheduleEnum } from '../schedule.type';
 
 /**
- * Patch Device Tag DTO Class
+ * Create Schedule DTO Class
  */
-export class PatchDeviceTagDto {
-  /**
-   * _id field
-   */
-  @ApiProperty({
-    required: true,
-  })
-  @IsString()
-  @IsNotEmpty()
-  _id: Schema.Types.ObjectId;
-
+export class CreateScheduleDto {
   /**
    * Display Name field
    */
@@ -25,4 +15,14 @@ export class PatchDeviceTagDto {
   @IsString()
   @IsNotEmpty()
   displayName: string;
+
+  /**
+   * Schedule Group field
+   */
+  @ApiProperty({
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  scheduleGroup: ScheduleEnum;
 }

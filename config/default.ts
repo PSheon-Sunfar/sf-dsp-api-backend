@@ -2,6 +2,12 @@ module.exports = {
   // APP
   APP_URL: process.env.MONGO_URI || 'http://localhost',
 
+  // Azure Aervice
+  AZURE_STORAGE_SAS_KEY:
+    process.env.AZURE_STORAGE_SAS_KEY || 'YOURAZURESTORAGEKEY',
+  AZURE_STORAGE_ACCOUNT:
+    process.env.AZURE_STORAGE_ACCOUNT || 'YOURAZURESTORAGEACCOUNT',
+
   // DATABASE
   MONGO_URI:
     process.env.MONGO_URI || 'mongodb://localhost:27017/YOURMONGODBNAME',

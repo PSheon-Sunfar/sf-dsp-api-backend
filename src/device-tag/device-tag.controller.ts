@@ -34,7 +34,7 @@ export class DeviceTagController {
   /**
    * Retrieves all device tag
    * @query given filter to fetch
-   * @returns {Promise<IDeviceTag>} queried device-tag data
+   * @returns {PaginateResult<QueryDto>} queried device-tag data
    */
   @Get('device-tags')
   @UseGuards(AuthGuard('jwt'), ACGuard)
@@ -48,13 +48,13 @@ export class DeviceTagController {
   async getDeviceTags(
     @Query() query: QueryDto,
   ): Promise<PaginateResult<QueryDto>> {
-    const deviceTag = await this.deviceTagService.getItems(query);
-    if (!deviceTag) {
+    const deviceTags = await this.deviceTagService.getItems(query);
+    if (!deviceTags) {
       throw new BadRequestException(
         'The device-tag with that query could not be found.',
       );
     }
-    return deviceTag;
+    return deviceTags;
   }
 
   /**
@@ -73,9 +73,9 @@ export class DeviceTagController {
   }
 
   /**
-   * Edit a profile
-   * @param {RegisterPayload} payload
-   * @returns {Promise<IProfile>} mutated profile data
+   * Edit a device tag
+   * @param {PatchDeviceTagDto} payload
+   * @returns {Promise<IDeviceTag>} mutated device tag
    */
   @Patch('device-tag')
   @UseGuards(AuthGuard('jwt'), ACGuard)
