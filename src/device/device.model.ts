@@ -49,4 +49,8 @@ export interface IDevice extends Document {
    * Display Name
    */
   readonly displayName: string;
+  /**
+   * Last Connection
+   */
+  readonly lastConnectionAt: Date;
 }

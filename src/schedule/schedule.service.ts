@@ -6,6 +6,7 @@ import {
   NotAcceptableException,
 } from '@nestjs/common';
 import { ISchedule } from './schedule.model';
+import { IDeviceTag } from '../device-tag/device-tag.model';
 import { QueryDto } from '../utils/dto/query.dto';
 import { CreateScheduleDto } from './dto/create_schedule.dto';
 import { PatchScheduleDto } from './dto/patch_schedule.dto';
@@ -29,10 +30,13 @@ export class ScheduleService {
   /**
    * Constructor
    * @param {Model<ISchedule>} scheduleModel
+   * @param {Model<IDevice>} deviceModel
    */
   constructor(
     @InjectModel('Schedule')
     private readonly scheduleModel: Model<ISchedule>,
+    @InjectModel('DeviceTag')
+    private readonly deviceTagModel: Model<IDeviceTag>,
   ) {}
 
   /**
@@ -68,6 +72,29 @@ export class ScheduleService {
   }
 
   /**
+   * Linking a tag to a schedule
+   * @param {Schema.Types.ObjectId} tagId
+   * @param {Schema.Types.ObjectId} scheduleId
+   * @returns {Promise<IDeviceTag>} linked device tag data
+   */
+  linkTagToSchedule(
+    tagId: Schema.Types.ObjectId,
+    scheduleId: Schema.Types.ObjectId,
+  ): Promise<IDeviceTag> {
+    return this.deviceTagModel
+      .findOneAndUpdate(
+        { _id: tagId },
+        {
+          $push: { linkedSchedule: scheduleId },
+        },
+        {
+          new: true,
+        },
+      )
+      .exec();
+  }
+
+  /**
    * Create a schedule with CreateScheduleDto fields
    * @param {CreateScheduleDto} createScheduleDto schedule payload
    * @returns {Promise<ISchedule>} created schedule data
@@ -81,10 +108,16 @@ export class ScheduleService {
         'The schedule with the provided displayName currently exists. Please choose another displayName.',
       );
     }
+
     // this will auto assign the admin role to each created user
     const createdSchedule = new this.scheduleModel({
       ...createScheduleDto,
     });
+
+    for await (const tagId of createScheduleDto.assignmentTags) {
+      this.linkTagToSchedule(tagId, createdSchedule._id);
+    }
+
     return createdSchedule.save();
   }
 

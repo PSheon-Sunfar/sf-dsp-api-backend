@@ -7,6 +7,13 @@ import * as mongoosePaginate from 'mongoose-paginate-v2';
 export const DeviceTagSchema = new Schema(
   {
     displayName: { type: String, required: true },
+    linkedSchedule: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Schedule',
+        default: undefined,
+      },
+    ],
   },
   {
     versionKey: false,
@@ -28,4 +35,8 @@ export interface IDeviceTag extends Document {
    * Display Name
    */
   readonly displayName: string;
+  /**
+   * Linked Schedule
+   */
+  readonly linkedSchedule: Schema.Types.ObjectId[];
 }

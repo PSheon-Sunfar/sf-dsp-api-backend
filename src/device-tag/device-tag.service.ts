@@ -6,7 +6,9 @@ import {
   NotAcceptableException,
 } from '@nestjs/common';
 import { IDeviceTag } from './device-tag.model';
+import { ISchedule } from '../schedule/schedule.model';
 import { QueryDto } from '../utils/dto/query.dto';
+import { QueryAvailableTagsDto } from './dto/query_available_device_tag.dto';
 import { CreateDeviceTagDto } from './dto/create_device_tag.dto';
 import { PatchDeviceTagDto } from './dto/patch_device_tag.dto';
 import * as db from '../utils/db';
@@ -29,10 +31,13 @@ export class DeviceTagService {
   /**
    * Constructor
    * @param {Model<IDeviceTag>} deviceTagModel
+   * @param {Model<ISchedule>} scheduleModel
    */
   constructor(
     @InjectModel('DeviceTag')
     private readonly deviceTagModel: Model<IDeviceTag>,
+    @InjectModel('Schedule')
+    private readonly scheduleModel: Model<ISchedule>,
   ) {}
 
   /**
@@ -51,7 +56,44 @@ export class DeviceTagService {
    */
   async getItems(queryDto: QueryDto): Promise<PaginateResult<QueryDto> | any> {
     const condition = await db.checkQueryString(queryDto);
-    return await db.getItems(queryDto, this.deviceTagModel, condition);
+    return await db.getItems(
+      { ...queryDto, populate: 'linkedSchedule' },
+      this.deviceTagModel,
+      condition,
+    );
+  }
+
+  /**
+   * Fetches all available device tags from database
+   * @param {QueryAvailableTagsDto} queryAvailableTagsDto
+   * @returns {PaginateResult<QueryDto>} queried device tag data
+   */
+  async getAvailableItems(
+    queryAvailableTagsDto: QueryAvailableTagsDto,
+  ): Promise<IDeviceTag[]> {
+    const allTags = await this.deviceTagModel.find({});
+    const usedTags = await this.scheduleModel
+      .find({
+        scheduleGroup: queryAvailableTagsDto.scheduleGroup,
+      })
+      .select('assignmentTags')
+      .exec();
+
+    const ALL_TAGS = new Set(allTags.map(item => item._id.toString()));
+    const USED_TAGS = usedTags.length
+      ? new Set(
+          usedTags
+            .map(item => item.assignmentTags)
+            .reduce((a, b) => [...a, ...b])
+            .map(item => item.toString()),
+        )
+      : new Set([]);
+
+    const difference = Array.from(
+      new Set([...ALL_TAGS].filter((item: string) => !USED_TAGS.has(item))),
+    ).map(tagId => allTags.find(item => item._id.toString() === tagId));
+
+    return difference;
   }
 
   /**

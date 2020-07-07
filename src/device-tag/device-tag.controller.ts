@@ -15,6 +15,7 @@ import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DeviceTagService } from './device-tag.service';
 import { CreateDeviceTagDto } from './dto/create_device_tag.dto';
 import { PatchDeviceTagDto } from './dto/patch_device_tag.dto';
+import { QueryAvailableTagsDto } from './dto/query_available_device_tag.dto';
 import { QueryDto } from '../utils/dto/query.dto';
 import { IDeviceTag } from './device-tag.model';
 
@@ -52,6 +53,40 @@ export class DeviceTagController {
     if (!deviceTags) {
       throw new BadRequestException(
         'The device-tag with that query could not be found.',
+      );
+    }
+    return deviceTags;
+  }
+
+  /**
+   * Retrieves all available device tags group by schedule group
+   * @query given filter to fetch
+   * @returns {PaginateResult<QueryDto>} queried device-tag data
+   */
+  @Get('device-tags/available')
+  @UseGuards(AuthGuard('jwt'), ACGuard)
+  @UseRoles({
+    resource: 'deviceTag',
+    action: 'read',
+    possession: 'any',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Fetch Available device tags Request Received',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Fetch Available device tags Request Failed',
+  })
+  async getAvailableDeviceTags(
+    @Body() queryAvailableTagsDto: QueryAvailableTagsDto,
+  ): Promise<IDeviceTag[]> {
+    const deviceTags = await this.deviceTagService.getAvailableItems(
+      queryAvailableTagsDto,
+    );
+    if (!deviceTags) {
+      throw new BadRequestException(
+        'The device-tags with that query could not be found.',
       );
     }
     return deviceTags;

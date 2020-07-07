@@ -1,17 +1,10 @@
 import { Schema, Document } from 'mongoose';
 import * as mongoosePaginate from 'mongoose-paginate-v2';
+import * as validator from 'validator';
 
 /**
  * Mongoose Schedule Schema
  */
-// const ContentSchema = new Schema({
-//   content: {
-//     type: Schema.Types.ObjectId,
-//     ref: 'Content',
-//     default: undefined,
-//   },
-//   interval: { type: Number, default: 5 },
-// });
 export const ScheduleSchema = new Schema(
   {
     displayName: { type: String, required: true },
@@ -32,12 +25,17 @@ export const ScheduleSchema = new Schema(
         default: undefined,
       },
     ],
-    // contents: [{ type: ContentSchema }],
     contents: [
       {
-        content: {
-          type: Schema.Types.ObjectId,
-          ref: 'Content',
+        contentURL: {
+          type: String,
+          validate: {
+            validator: (v: string): boolean => {
+              return validator.isURL(v);
+            },
+            message: 'NOT_A_VALID_URL',
+          },
+          required: true,
         },
         interval: { type: Number, required: true, default: 5 },
       },

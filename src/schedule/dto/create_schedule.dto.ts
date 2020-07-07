@@ -8,12 +8,14 @@ import {
   IsBooleanString,
   ValidateNested,
   IsNumberString,
+  IsUrl,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class ContentType {
   @IsString()
-  content: Schema.Types.ObjectId;
+  @IsUrl()
+  contentURL: string;
 
   @IsNumberString()
   interval: number;
