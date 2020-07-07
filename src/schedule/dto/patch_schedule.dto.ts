@@ -6,8 +6,8 @@ import {
   IsString,
   IsArray,
   IsBoolean,
+  Matches,
 } from 'class-validator';
-import { ScheduleEnum } from '../schedule.type';
 
 /**
  * Patch Schedule DTO Class
@@ -39,8 +39,9 @@ export class PatchScheduleDto {
   })
   @IsOptional()
   @IsString()
+  @Matches(/^20\d{2}\/\d{2}$/)
   @IsNotEmpty()
-  scheduleGroup: ScheduleEnum;
+  scheduleGroup: string;
 
   /**
    * Assignment Tag field
@@ -60,7 +61,7 @@ export class PatchScheduleDto {
   })
   @IsOptional()
   @IsArray()
-  contentList: Schema.Types.ObjectId[];
+  contents: Schema.Types.ObjectId[];
 
   /**
    * published field

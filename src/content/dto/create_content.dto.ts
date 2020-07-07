@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsEnum, IsUrl } from 'class-validator';
-import { ScheduleEnum } from '../../schedule/schedule.type';
+import { IsNotEmpty, IsString, Matches, IsUrl } from 'class-validator';
 
 /**
  * Create Content DTO Class
@@ -22,7 +21,7 @@ export class ContentBodyDto {
   @ApiProperty({
     required: true,
   })
-  @IsEnum(ScheduleEnum, { each: true })
+  @Matches(/^20\d{2}\/\d{2}$/)
   @IsNotEmpty()
   scheduleGroup: string;
 }

@@ -24,6 +24,7 @@ import { roles } from './app.roles';
       useFactory: (configService: ConfigService) =>
         ({
           uri: configService.get('MONGO_URI'),
+          useFindAndModify: false,
           useNewUrlParser: true,
           useUnifiedTopology: true,
         } as MongooseModuleAsyncOptions),

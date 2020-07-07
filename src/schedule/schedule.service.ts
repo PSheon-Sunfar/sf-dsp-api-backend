@@ -53,4 +53,35 @@ export class ScheduleService {
     const condition = await db.checkQueryString(queryDto);
     return await db.getItems(queryDto, this.scheduleModel, condition);
   }
+
+  /**
+   * Fetches a schedule from database by displayName
+   * @param {string} displayName
+   * @returns {Promise<ISchedule>} queried schedule data
+   */
+  getByDisplayName(displayName: string): Promise<ISchedule> {
+    return this.scheduleModel.findOne({ displayName }).exec();
+  }
+
+  /**
+   * Create a schedule with CreateScheduleDto fields
+   * @param {CreateScheduleDto} createScheduleDto schedule payload
+   * @returns {Promise<ISchedule>} created schedule data
+   */
+  async create(createScheduleDto: CreateScheduleDto): Promise<ISchedule> {
+    const existsSchedule = await this.getByDisplayName(
+      createScheduleDto.displayName,
+    );
+    if (existsSchedule) {
+      throw new NotAcceptableException(
+        'The schedule with the provided displayName currently exists. Please choose another displayName.',
+      );
+    }
+    console.log('createScheduleDto, ', createScheduleDto);
+    // this will auto assign the admin role to each created user
+    const createdSchedule = new this.scheduleModel({
+      ...createScheduleDto,
+    });
+    return createdSchedule.save();
+  }
 }

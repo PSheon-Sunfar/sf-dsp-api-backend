@@ -1,6 +1,12 @@
+import { Schema } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
-import { ScheduleEnum } from '../schedule.type';
+import {
+  IsNotEmpty,
+  IsString,
+  Matches,
+  IsArray,
+  IsBooleanString,
+} from 'class-validator';
 
 /**
  * Create Schedule DTO Class
@@ -23,6 +29,37 @@ export class CreateScheduleDto {
     required: true,
   })
   @IsString()
+  @Matches(/^20\d{2}\/\d{2}$/)
   @IsNotEmpty()
-  scheduleGroup: ScheduleEnum;
+  scheduleGroup: string;
+
+  /**
+   * Schedule Group field
+   */
+  @ApiProperty({
+    required: true,
+  })
+  @IsArray()
+  @IsNotEmpty()
+  assignmentTags: Schema.Types.ObjectId[];
+
+  /**
+   * Content List field
+   */
+  @ApiProperty({
+    required: true,
+  })
+  @IsArray()
+  @IsNotEmpty()
+  contents: Schema.Types.ObjectId[];
+
+  /**
+   * Published field
+   */
+  @ApiProperty({
+    required: true,
+  })
+  @IsBooleanString()
+  @IsNotEmpty()
+  published: boolean;
 }

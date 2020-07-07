@@ -98,7 +98,6 @@ export class DeviceAccessService {
     const createdDeviceAccess = new this.deviceAccessModel({
       ...createDeviceAccessDto,
     });
-    console.log('createdDeviceAccess, ', createdDeviceAccess);
     return createdDeviceAccess.save();
   }
 }

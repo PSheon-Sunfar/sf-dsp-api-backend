@@ -20,8 +20,6 @@ export const DeviceSchema = new Schema(
       uppercase: true,
     },
     displayName: { type: String },
-    cpuUsage: { type: Number, default: 0, min: 0, max: 100 },
-    memoryUsage: { type: Number, default: 0, min: 0, max: 100 },
     lastConnectionAt: {
       type: Date,
       default: new Date(),

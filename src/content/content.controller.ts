@@ -80,24 +80,21 @@ export class ContentController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async upload(
     @Body() contentBodyDto: ContentBodyDto,
-    @UploadedFile() contentFiles: UploadedFileMetadata,
-    // ): Promise<IContent> {
-  ) {
-    // FIXME: no error handling for duplicate displayName
-    console.log('contentBodyDto, ', contentBodyDto);
-    console.log('contentFiles, ', contentFiles);
-    // contentFile = {
-    //   ...contentFile,
-    //   originalname: `${contentBodyDto.scheduleGroup}/${contentNameConverter(
-    //     contentFile.originalname,
-    //   )}`,
-    // };
-    // const storageUrI = await this.azureStorage.upload(contentFile);
-    // const content = await this.contentService.create({
-    //   uri: storageUrI.split('?sv=')[0],
-    //   ...contentBodyDto,
-    // });
-    // return content;
+    @UploadedFile() contentFile: UploadedFileMetadata,
+  ): Promise<IContent> {
+    // FIXME: no error handling for duplicate displayName;
+    contentFile = {
+      ...contentFile,
+      originalname: `${contentBodyDto.scheduleGroup}/${contentNameConverter(
+        contentFile.originalname,
+      )}`,
+    };
+    const storageUrI = await this.azureStorage.upload(contentFile);
+    const content = await this.contentService.create({
+      uri: storageUrI.split('?sv=')[0],
+      ...contentBodyDto,
+    });
+    return content;
   }
 
   /**

@@ -11,20 +11,12 @@ export const ContentSchema = new Schema(
     /* Denormalize */
     scheduleGroup: {
       type: String,
-      enum: [
-        'jan',
-        'feb',
-        'mar',
-        'apr',
-        'may',
-        'jun',
-        'jul',
-        'aug',
-        'sep',
-        'oct',
-        'nov',
-        'dec',
-      ],
+      validate: {
+        validator: (v: string): boolean => {
+          return /^20\d{2}\/\d{2}$/.test(v);
+        },
+        message: 'SCHEDULE_GROUP_IS_NOT_VALID',
+      },
       default: '',
     },
     uri: {

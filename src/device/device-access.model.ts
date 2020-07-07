@@ -31,6 +31,8 @@ export const DeviceAccessSchema = new Schema(
         message: 'IP_IS_NOT_VALID',
       },
     },
+    cpuUsage: { type: Number, default: 0, min: 0, max: 100 },
+    memoryUsage: { type: Number, default: 0, min: 0, max: 100 },
   },
   {
     versionKey: false,

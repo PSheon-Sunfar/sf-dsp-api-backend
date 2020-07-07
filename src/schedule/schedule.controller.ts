@@ -57,19 +57,18 @@ export class ScheduleController {
     return schedules;
   }
 
-  // TODO
-  // /**
-  //  * Create schedule route to create tag for users
-  //  * @param {CreateScheduleDto} createScheduleDto the create schedule dto
-  //  */
-  // @Post('schedule')
-  // @ApiResponse({ status: 201, description: 'Create Completed' })
-  // @ApiResponse({ status: 400, description: 'Bad Request' })
-  // @ApiResponse({ status: 401, description: 'Unauthorized' })
-  // async register(
-  //   @Body() createScheduleDto: CreateScheduleDto,
-  // ): Promise<ISchedule> {
-  //   const schedule = await this.scheduleService.create(createScheduleDto);
-  //   return schedule;
-  // }
+  /**
+   * Create schedule route to create tag for users
+   * @param {CreateScheduleDto} createScheduleDto the create schedule dto
+   */
+  @Post('schedule')
+  @ApiResponse({ status: 201, description: 'Create Completed' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async register(
+    @Body() createScheduleDto: CreateScheduleDto,
+  ): Promise<ISchedule> {
+    const schedule = await this.scheduleService.create(createScheduleDto);
+    return schedule;
+  }
 }
