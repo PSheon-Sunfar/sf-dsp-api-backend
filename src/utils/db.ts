@@ -63,11 +63,13 @@ const listInitOptions = async query => {
     const sortBy = buildSort(sort, order);
     const page = parseInt(query.page, 10) || 1;
     const limit = parseInt(query.limit, 10) || 10;
+    const populate = query.populate ? query.populate : undefined;
     const options = {
       sort: sortBy,
       lean: true,
       page,
       limit,
+      populate,
     };
     resolve(options);
   });

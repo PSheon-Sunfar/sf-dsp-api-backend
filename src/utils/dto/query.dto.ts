@@ -6,6 +6,7 @@ import {
   IsNotEmpty,
   Matches,
   IsEnum,
+  IsOptional,
 } from 'class-validator';
 
 enum sortEnum {

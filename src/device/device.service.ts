@@ -1,10 +1,6 @@
 import { Model, Schema, PaginateResult } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import {
-  BadRequestException,
-  Injectable,
-  NotAcceptableException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { IDevice } from './device.model';
 import { QueryDto } from '../utils/dto/query.dto';
 import { PatchDeviceDto } from './dto/patch_device.dto';

@@ -1,8 +1,8 @@
 import { Model, Schema, PaginateResult } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import {
-  BadRequestException,
   Injectable,
+  BadRequestException,
   NotAcceptableException,
 } from '@nestjs/common';
 import { ISchedule } from './schedule.model';
@@ -51,7 +51,11 @@ export class ScheduleService {
    */
   async getItems(queryDto: QueryDto): Promise<PaginateResult<QueryDto> | any> {
     const condition = await db.checkQueryString(queryDto);
-    return await db.getItems(queryDto, this.scheduleModel, condition);
+    return await db.getItems(
+      { ...queryDto, populate: 'assignmentTags contents.content' },
+      this.scheduleModel,
+      condition,
+    );
   }
 
   /**
@@ -77,11 +81,29 @@ export class ScheduleService {
         'The schedule with the provided displayName currently exists. Please choose another displayName.',
       );
     }
-    console.log('createScheduleDto, ', createScheduleDto);
     // this will auto assign the admin role to each created user
     const createdSchedule = new this.scheduleModel({
       ...createScheduleDto,
     });
     return createdSchedule.save();
+  }
+
+  /**
+   * Edit schedule data
+   * @param {PatchScheduleDto} patchScheduleDto
+   * @returns {Promise<ISchedule>} mutated schedule data
+   */
+  async edit(patchScheduleDto: PatchScheduleDto): Promise<ISchedule> {
+    const { _id } = patchScheduleDto;
+    const updatedSchedule = await this.scheduleModel.updateOne(
+      { _id },
+      patchScheduleDto,
+    );
+    if (updatedSchedule.nModified !== 1) {
+      throw new BadRequestException(
+        'The schedule with that _id does not exist in the system. Please try another one.',
+      );
+    }
+    return this.get(_id);
   }
 }

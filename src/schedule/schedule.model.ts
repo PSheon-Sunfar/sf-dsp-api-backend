@@ -4,13 +4,14 @@ import * as mongoosePaginate from 'mongoose-paginate-v2';
 /**
  * Mongoose Schedule Schema
  */
-const ContentSchema = new Schema({
-  content: {
-    type: Schema.Types.ObjectId,
-    ref: 'Content',
-  },
-  interval: { type: Number, default: 5 },
-});
+// const ContentSchema = new Schema({
+//   content: {
+//     type: Schema.Types.ObjectId,
+//     ref: 'Content',
+//     default: undefined,
+//   },
+//   interval: { type: Number, default: 5 },
+// });
 export const ScheduleSchema = new Schema(
   {
     displayName: { type: String, required: true },
@@ -31,7 +32,16 @@ export const ScheduleSchema = new Schema(
         default: undefined,
       },
     ],
-    contents: [{ type: ContentSchema, default: undefined }],
+    // contents: [{ type: ContentSchema }],
+    contents: [
+      {
+        content: {
+          type: Schema.Types.ObjectId,
+          ref: 'Content',
+        },
+        interval: { type: Number, required: true, default: 5 },
+      },
+    ],
     published: { type: Boolean, default: false },
   },
   {

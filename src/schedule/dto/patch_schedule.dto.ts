@@ -5,9 +5,20 @@ import {
   IsOptional,
   IsString,
   IsArray,
-  IsBoolean,
   Matches,
+  IsBooleanString,
+  ValidateNested,
+  IsNumberString,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+
+class ContentType {
+  @IsString()
+  content: Schema.Types.ObjectId;
+
+  @IsNumberString()
+  interval: number;
+}
 
 /**
  * Patch Schedule DTO Class
@@ -32,7 +43,7 @@ export class PatchScheduleDto {
   displayName: string;
 
   /**
-   * Display Name field
+   * Schedule Group field
    */
   @ApiProperty({
     required: true,
@@ -60,8 +71,9 @@ export class PatchScheduleDto {
     required: true,
   })
   @IsOptional()
-  @IsArray()
-  contents: Schema.Types.ObjectId[];
+  @ValidateNested({ each: true })
+  @Type(() => ContentType)
+  contents: ContentType[];
 
   /**
    * published field
@@ -70,6 +82,6 @@ export class PatchScheduleDto {
     required: true,
   })
   @IsOptional()
-  @IsBoolean()
+  @IsBooleanString()
   published: boolean;
 }

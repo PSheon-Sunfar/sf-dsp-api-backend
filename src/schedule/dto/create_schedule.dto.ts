@@ -6,7 +6,18 @@ import {
   Matches,
   IsArray,
   IsBooleanString,
+  ValidateNested,
+  IsNumberString,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+
+class ContentType {
+  @IsString()
+  content: Schema.Types.ObjectId;
+
+  @IsNumberString()
+  interval: number;
+}
 
 /**
  * Create Schedule DTO Class
@@ -34,7 +45,7 @@ export class CreateScheduleDto {
   scheduleGroup: string;
 
   /**
-   * Schedule Group field
+   * Assignment Tag field
    */
   @ApiProperty({
     required: true,
@@ -49,9 +60,10 @@ export class CreateScheduleDto {
   @ApiProperty({
     required: true,
   })
-  @IsArray()
-  @IsNotEmpty()
-  contents: Schema.Types.ObjectId[];
+  // @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ContentType)
+  contents: ContentType[];
 
   /**
    * Published field

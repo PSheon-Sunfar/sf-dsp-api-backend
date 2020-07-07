@@ -5,7 +5,6 @@ import {
   Controller,
   Get,
   Post,
-  Param,
   Patch,
   UseGuards,
 } from '@nestjs/common';
@@ -16,6 +15,7 @@ import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ScheduleService } from './schedule.service';
 import { QueryDto } from '../utils/dto/query.dto';
 import { CreateScheduleDto } from './dto/create_schedule.dto';
+import { PatchScheduleDto } from './dto/patch_schedule.dto';
 import { ISchedule } from './schedule.model';
 
 /**
@@ -70,5 +70,25 @@ export class ScheduleController {
   ): Promise<ISchedule> {
     const schedule = await this.scheduleService.create(createScheduleDto);
     return schedule;
+  }
+
+  /**
+   * Edit a schedule
+   * @param {PatchScheduleDto} payload
+   * @returns {Promise<ISchedule>} mutated schedule
+   */
+  @Patch('schedule')
+  @UseGuards(AuthGuard('jwt'), ACGuard)
+  @UseRoles({
+    resource: 'schedule',
+    action: 'update',
+    possession: 'any',
+  })
+  @ApiResponse({ status: 200, description: 'Patch Schedule Request Received' })
+  @ApiResponse({ status: 400, description: 'Patch Schedule Request Failed' })
+  async patchDeviceTag(
+    @Body() patchScheduleDto: PatchScheduleDto,
+  ): Promise<ISchedule> {
+    return await this.scheduleService.edit(patchScheduleDto);
   }
 }
