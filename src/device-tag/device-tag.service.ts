@@ -57,7 +57,7 @@ export class DeviceTagService {
   async getItems(queryDto: QueryDto): Promise<PaginateResult<QueryDto> | any> {
     const condition = await db.checkQueryString(queryDto);
     return await db.getItems(
-      { ...queryDto, populate: 'linkedSchedule' },
+      { ...queryDto, populate: 'linkedDevice linkedSchedule' },
       this.deviceTagModel,
       condition,
     );

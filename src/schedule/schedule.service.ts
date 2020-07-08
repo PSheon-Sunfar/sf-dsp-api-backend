@@ -6,7 +6,6 @@ import {
   NotAcceptableException,
 } from '@nestjs/common';
 import { ISchedule } from './schedule.model';
-import { IDevice } from '../device/device.model';
 import { IDeviceTag } from '../device-tag/device-tag.model';
 import { QueryDto } from '../utils/dto/query.dto';
 import { QuerySelfScheduleDto } from './dto/query_self_schedule.dto';
@@ -39,19 +38,7 @@ export class ScheduleService {
     private readonly scheduleModel: Model<ISchedule>,
     @InjectModel('DeviceTag')
     private readonly deviceTagModel: Model<IDeviceTag>,
-    @InjectModel('Device')
-    private readonly deviceModel: Model<IDevice>,
   ) {}
-
-  /**
-   * Fetches a id from device database by mac address
-   * @param {string} macAddress
-   * @returns {Promise<Schema.Types.ObjectId>} queried schedule data
-   */
-  // getDeviceId(macAddress: string): Promise<Schema.Types.ObjectId> {
-  getDeviceId(macAddress: string) {
-    return this.deviceModel.findOne({ macAddress }).exec();
-  }
 
   /**
    * Fetches a schedule from database by UUID
@@ -67,16 +54,28 @@ export class ScheduleService {
    * @query {QuerySelfScheduleDto} querySelfScheduleDto
    * @returns {Promise<ISchedule>} queried schedule data
    */
-  // async getSelfItem(
-  //   querySelfScheduleDto: QuerySelfScheduleDto,
-  // ): Promise<ISchedule> {
-  //   const await getDeviceId(querySelfScheduleDto.macAddress);
-  //   return this.scheduleModel
-  //     .find({
-  //       $includes: { assignmentTags: assignmentTags },
-  //     })
-  //     .exec();
-  // }
+  async getSelfItem(
+    querySelfScheduleDto: QuerySelfScheduleDto,
+    // ): Promise<ISchedule[]> {
+  ): Promise<any[] | []> {
+    const allDeviceTag = await this.deviceTagModel
+      .find()
+      .populate({ path: 'linkedDevice linkedSchedule' })
+      .exec();
+
+    const found = allDeviceTag.filter(deviceTag => {
+      if (!deviceTag.linkedDevice.length) return false;
+      return deviceTag.linkedDevice.find(
+        (device: any) => device.macAddress === querySelfScheduleDto.macAddress,
+      );
+    });
+
+    if (!found.length) {
+      return found;
+    } else {
+      return found[0].linkedSchedule;
+    }
+  }
 
   /**
    * Fetches a schedule from database by UUID
