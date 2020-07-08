@@ -17,6 +17,16 @@ class ContentType {
   @IsUrl()
   contentURL: string;
 
+  /**
+   * Display Name field
+   */
+  @ApiProperty({
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  displayName: string;
+
   @IsNumberString()
   interval: number;
 }

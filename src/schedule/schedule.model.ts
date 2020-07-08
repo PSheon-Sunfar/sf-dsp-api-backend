@@ -37,6 +37,7 @@ export const ScheduleSchema = new Schema(
           },
           required: true,
         },
+        displayName: { type: String, required: true },
         interval: { type: Number, required: true, default: 5 },
       },
     ],

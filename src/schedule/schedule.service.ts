@@ -6,8 +6,10 @@ import {
   NotAcceptableException,
 } from '@nestjs/common';
 import { ISchedule } from './schedule.model';
+import { IDevice } from '../device/device.model';
 import { IDeviceTag } from '../device-tag/device-tag.model';
 import { QueryDto } from '../utils/dto/query.dto';
+import { QuerySelfScheduleDto } from './dto/query_self_schedule.dto';
 import { CreateScheduleDto } from './dto/create_schedule.dto';
 import { PatchScheduleDto } from './dto/patch_schedule.dto';
 import * as db from '../utils/db';
@@ -37,7 +39,19 @@ export class ScheduleService {
     private readonly scheduleModel: Model<ISchedule>,
     @InjectModel('DeviceTag')
     private readonly deviceTagModel: Model<IDeviceTag>,
+    @InjectModel('Device')
+    private readonly deviceModel: Model<IDevice>,
   ) {}
+
+  /**
+   * Fetches a id from device database by mac address
+   * @param {string} macAddress
+   * @returns {Promise<Schema.Types.ObjectId>} queried schedule data
+   */
+  // getDeviceId(macAddress: string): Promise<Schema.Types.ObjectId> {
+  getDeviceId(macAddress: string) {
+    return this.deviceModel.findOne({ macAddress }).exec();
+  }
 
   /**
    * Fetches a schedule from database by UUID
@@ -47,6 +61,22 @@ export class ScheduleService {
   get(_id: Schema.Types.ObjectId): Promise<ISchedule> {
     return this.scheduleModel.findById(_id).exec();
   }
+
+  /**
+   * Fetch a schedule from database by macAddress
+   * @query {QuerySelfScheduleDto} querySelfScheduleDto
+   * @returns {Promise<ISchedule>} queried schedule data
+   */
+  // async getSelfItem(
+  //   querySelfScheduleDto: QuerySelfScheduleDto,
+  // ): Promise<ISchedule> {
+  //   const await getDeviceId(querySelfScheduleDto.macAddress);
+  //   return this.scheduleModel
+  //     .find({
+  //       $includes: { assignmentTags: assignmentTags },
+  //     })
+  //     .exec();
+  // }
 
   /**
    * Fetches a schedule from database by UUID

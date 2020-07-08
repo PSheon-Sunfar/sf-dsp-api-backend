@@ -14,6 +14,7 @@ import { ACGuard, UseRoles } from 'nest-access-control';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ScheduleService } from './schedule.service';
 import { QueryDto } from '../utils/dto/query.dto';
+import { QuerySelfScheduleDto } from './dto/query_self_schedule.dto';
 import { CreateScheduleDto } from './dto/create_schedule.dto';
 import { PatchScheduleDto } from './dto/patch_schedule.dto';
 import { ISchedule } from './schedule.model';
@@ -30,6 +31,29 @@ export class ScheduleController {
    * @param scheduleService
    */
   constructor(private readonly scheduleService: ScheduleService) {}
+
+  // /**
+  //  * Retrieves self schedule data via mac address
+  //  * @param macAddress the uniq mac address
+  //  * @returns {PaginateResult<QueryDto>} queried schedule data
+  //  */
+  // @Get('schedules')
+  // @UseGuards(AuthGuard('jwt'))
+  // @ApiResponse({ status: 200, description: 'Fetch Schedule Request Received' })
+  // @ApiResponse({ status: 400, description: 'Fetch Schedule Request Failed' })
+  // async getScheduleViaMacAddress(
+  //   @Body() querySelfScheduleDto: QuerySelfScheduleDto,
+  // ): Promise<ISchedule> {
+  //   const schedule = await this.scheduleService.getSelfItem(
+  //     querySelfScheduleDto,
+  //   );
+  //   if (!schedule) {
+  //     throw new BadRequestException(
+  //       'The schedule with that mac address could not be found.',
+  //     );
+  //   }
+  //   return schedule;
+  // }
 
   /**
    * Retrieves all schedule data

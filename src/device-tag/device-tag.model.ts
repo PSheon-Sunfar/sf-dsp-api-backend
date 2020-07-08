@@ -7,6 +7,13 @@ import * as mongoosePaginate from 'mongoose-paginate-v2';
 export const DeviceTagSchema = new Schema(
   {
     displayName: { type: String, required: true },
+    linkedDevice: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Device',
+        default: undefined,
+      },
+    ],
     linkedSchedule: [
       {
         type: Schema.Types.ObjectId,
