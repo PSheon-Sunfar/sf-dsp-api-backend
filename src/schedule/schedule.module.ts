@@ -4,13 +4,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleSchema } from './schedule.model';
 import { ScheduleController } from './schedule.controller';
 import { DeviceTagSchema } from '../device-tag/device-tag.model';
-import { DeviceSchema } from '../device/device.model';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'Schedule', schema: ScheduleSchema }]),
     MongooseModule.forFeature([{ name: 'DeviceTag', schema: DeviceTagSchema }]),
-    MongooseModule.forFeature([{ name: 'Device', schema: DeviceSchema }]),
   ],
   providers: [ScheduleService],
   exports: [ScheduleService],

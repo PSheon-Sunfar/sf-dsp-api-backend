@@ -43,6 +43,10 @@ export interface IDeviceTag extends Document {
    */
   readonly displayName: string;
   /**
+   * Linked Device
+   */
+  readonly linkedDevice: Schema.Types.ObjectId[];
+  /**
    * Linked Schedule
    */
   readonly linkedSchedule: Schema.Types.ObjectId[];

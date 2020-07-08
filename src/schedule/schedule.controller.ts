@@ -6,6 +6,7 @@ import {
   Get,
   Post,
   Patch,
+  Param,
   UseGuards,
 } from '@nestjs/common';
 import { PaginateResult } from 'mongoose';
@@ -32,28 +33,29 @@ export class ScheduleController {
    */
   constructor(private readonly scheduleService: ScheduleService) {}
 
-  // /**
-  //  * Retrieves self schedule data via mac address
-  //  * @param macAddress the uniq mac address
-  //  * @returns {PaginateResult<QueryDto>} queried schedule data
-  //  */
-  // @Get('schedules')
-  // @UseGuards(AuthGuard('jwt'))
-  // @ApiResponse({ status: 200, description: 'Fetch Schedule Request Received' })
-  // @ApiResponse({ status: 400, description: 'Fetch Schedule Request Failed' })
-  // async getScheduleViaMacAddress(
-  //   @Body() querySelfScheduleDto: QuerySelfScheduleDto,
-  // ): Promise<ISchedule> {
-  //   const schedule = await this.scheduleService.getSelfItem(
-  //     querySelfScheduleDto,
-  //   );
-  //   if (!schedule) {
-  //     throw new BadRequestException(
-  //       'The schedule with that mac address could not be found.',
-  //     );
-  //   }
-  //   return schedule;
-  // }
+  /**
+   * Retrieves self schedule data via mac address
+   * @param macAddress the uniq mac address
+   * @returns {PaginateResult<QueryDto>} queried schedule data
+   */
+  @Get('schedule/:macAddress')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiResponse({ status: 200, description: 'Fetch Schedule Request Received' })
+  @ApiResponse({ status: 400, description: 'Fetch Schedule Request Failed' })
+  async getScheduleViaMacAddress(
+    @Param() querySelfScheduleDto: QuerySelfScheduleDto,
+    // ): Promise<ISchedule> {
+  ): Promise<any> {
+    const schedule = await this.scheduleService.getSelfItem(
+      querySelfScheduleDto,
+    );
+    if (!schedule) {
+      throw new BadRequestException(
+        'The schedule with that mac address could not be found.',
+      );
+    }
+    return schedule;
+  }
 
   /**
    * Retrieves all schedule data

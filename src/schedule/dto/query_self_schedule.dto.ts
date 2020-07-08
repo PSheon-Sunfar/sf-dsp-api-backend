@@ -1,3 +1,4 @@
+import { Schema } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, Matches } from 'class-validator';
 
@@ -11,7 +12,7 @@ export class QuerySelfScheduleDto {
   @ApiProperty({
     required: true,
   })
-  @Matches(/^(([A-Fa-f0-9]{2}[:]){5}[A-Fa-f0-9]{2}[,]?)+$/)
+  @Matches(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/)
   @IsNotEmpty()
   macAddress: string;
 }
