@@ -63,7 +63,7 @@ export class DeviceTagController {
    * @query given filter to fetch
    * @returns {PaginateResult<QueryDto>} queried device-tag data
    */
-  @Get('device-tags/available')
+  @Post('device-tags/available')
   @UseGuards(AuthGuard('jwt'), ACGuard)
   @UseRoles({
     resource: 'deviceTag',
