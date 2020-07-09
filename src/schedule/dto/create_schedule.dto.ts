@@ -7,7 +7,7 @@ import {
   IsArray,
   IsBooleanString,
   ValidateNested,
-  IsNumberString,
+  IsNumber,
   IsUrl,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -27,7 +27,7 @@ class ContentType {
   @IsNotEmpty()
   displayName: string;
 
-  @IsNumberString()
+  @IsNumber()
   interval: number;
 }
 
