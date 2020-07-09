@@ -6,14 +6,15 @@ import {
   Get,
   Post,
   Patch,
+  Delete,
   Param,
   UseGuards,
 } from '@nestjs/common';
-import { PaginateResult } from 'mongoose';
+import { PaginateResult, Schema } from 'mongoose';
 import { AuthGuard } from '@nestjs/passport';
 import { ACGuard, UseRoles } from 'nest-access-control';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ScheduleService } from './schedule.service';
+import { ScheduleService, IGenericMessageBody } from './schedule.service';
 import { QueryDto } from '../utils/dto/query.dto';
 import { QuerySelfScheduleDto } from './dto/query_self_schedule.dto';
 import { CreateScheduleDto } from './dto/create_schedule.dto';
@@ -116,5 +117,25 @@ export class ScheduleController {
     @Body() patchScheduleDto: PatchScheduleDto,
   ): Promise<ISchedule> {
     return await this.scheduleService.edit(patchScheduleDto);
+  }
+
+  /**
+   * Removes a schedule from the database
+   * @param {Schema.Types.ObjectId} _id the _id to remove
+   * @returns {Promise<IGenericMessageBody>} whether or not the schedule has been deleted
+   */
+  @Delete('schedule')
+  @UseGuards(AuthGuard('jwt'), ACGuard)
+  @UseRoles({
+    resource: 'schedule',
+    action: 'delete',
+    possession: 'any',
+  })
+  @ApiResponse({ status: 200, description: 'Delete schedule Request Received' })
+  @ApiResponse({ status: 400, description: 'Delete schedule Request Failed' })
+  async delete(
+    @Body('_id') _id: Schema.Types.ObjectId,
+  ): Promise<IGenericMessageBody> {
+    return await this.scheduleService.delete(_id);
   }
 }

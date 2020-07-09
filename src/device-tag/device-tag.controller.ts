@@ -6,13 +6,14 @@ import {
   Get,
   Post,
   Query,
+  Delete,
   UseGuards,
 } from '@nestjs/common';
-import { PaginateResult } from 'mongoose';
+import { PaginateResult, Schema } from 'mongoose';
 import { AuthGuard } from '@nestjs/passport';
 import { ACGuard, UseRoles } from 'nest-access-control';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { DeviceTagService } from './device-tag.service';
+import { DeviceTagService, IGenericMessageBody } from './device-tag.service';
 import { CreateDeviceTagDto } from './dto/create_device_tag.dto';
 import { PatchDeviceTagDto } from './dto/patch_device_tag.dto';
 import { QueryAvailableTagsDto } from './dto/query_available_device_tag.dto';
@@ -125,5 +126,28 @@ export class DeviceTagController {
     @Body() payload: PatchDeviceTagDto,
   ): Promise<IDeviceTag> {
     return await this.deviceTagService.edit(payload);
+  }
+
+  /**
+   * Removes a device tag from the database
+   * @param {Schema.Types.ObjectId} _id the _id to remove
+   * @returns {Promise<IGenericMessageBody>} whether or not the device tag has been deleted
+   */
+  @Delete('device-tag')
+  @UseGuards(AuthGuard('jwt'), ACGuard)
+  @UseRoles({
+    resource: 'deviceTag',
+    action: 'delete',
+    possession: 'any',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Delete Device tag Request Received',
+  })
+  @ApiResponse({ status: 400, description: 'Delete Device tag Request Failed' })
+  async delete(
+    @Body('_id') _id: Schema.Types.ObjectId,
+  ): Promise<IGenericMessageBody> {
+    return await this.deviceTagService.delete(_id);
   }
 }

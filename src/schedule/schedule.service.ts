@@ -214,4 +214,22 @@ export class ScheduleService {
     }
     return this.get(_id);
   }
+
+  /**
+   * NOTE: It is unsafe to remove, save delete function queued
+   * Delete schedule with given _id
+   * @param {string} _id
+   * @returns {Promise<IGenericMessageBody>} whether or not the crud operation was completed
+   */
+  delete(_id: Schema.Types.ObjectId): Promise<IGenericMessageBody> {
+    return this.scheduleModel.deleteOne({ _id }).then(doc => {
+      if (doc.deletedCount === 1) {
+        return { message: `Deleted schedule ${_id} from records` };
+      } else {
+        throw new BadRequestException(
+          `Failed to delete a schedule by the _id of ${_id}.`,
+        );
+      }
+    });
+  }
 }

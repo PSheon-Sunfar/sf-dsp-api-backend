@@ -147,6 +147,7 @@ export class DeviceTagService {
   }
 
   /**
+   * NOTE: It is unsafe to remove, save delete function queued
    * Delete device tag with given _id
    * @param {string} _id
    * @returns {Promise<IGenericMessageBody>} whether or not the crud operation was completed

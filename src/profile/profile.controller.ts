@@ -3,7 +3,6 @@ import {
   Body,
   Query,
   Controller,
-  Delete,
   Get,
   Param,
   Patch,
@@ -13,7 +12,7 @@ import { PaginateResult } from 'mongoose';
 import { AuthGuard } from '@nestjs/passport';
 import { ACGuard, UseRoles } from 'nest-access-control';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ProfileService, IGenericMessageBody } from './profile.service';
+import { ProfileService } from './profile.service';
 import { QueryDto } from '../utils/dto/query.dto';
 import { PatchProfileDto, PatchProfileRoleDto } from './dto/patch_profile.dto';
 import { IProfile } from './profile.model';
