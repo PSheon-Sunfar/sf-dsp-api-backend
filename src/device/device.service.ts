@@ -2,8 +2,10 @@ import { Model, Schema, PaginateResult } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { IDevice } from './device.model';
+import { IDeviceTag } from '../device-tag/device-tag.model';
 import { QueryDto } from '../utils/dto/query.dto';
 import { PatchDeviceDto } from './dto/patch_device.dto';
+import { calcLinkAndUnlinkTags } from '../utils';
 import * as db from '../utils/db';
 
 /**
@@ -28,6 +30,8 @@ export class DeviceService {
   constructor(
     @InjectModel('Device')
     private readonly deviceModel: Model<IDevice>,
+    @InjectModel('DeviceTag')
+    private readonly deviceTagModel: Model<IDeviceTag>,
   ) {}
 
   /**
@@ -56,11 +60,53 @@ export class DeviceService {
    */
   async edit(patchDeviceDto: PatchDeviceDto): Promise<IDevice> {
     const { _id } = patchDeviceDto;
-    const updatedDeviceTag = await this.deviceModel.updateOne(
-      { _id },
-      patchDeviceDto,
+    const oldDevice = await this.get(_id);
+    const [UNLINK_TAGS, LINK_TAGS] = calcLinkAndUnlinkTags(
+      oldDevice.linkedTags,
+      patchDeviceDto.linkedTags || [],
     );
-    if (updatedDeviceTag.nModified !== 1) {
+
+    /* unlink old tags */
+    for await (const unlinkTagId of UNLINK_TAGS) {
+      this.deviceTagModel
+        .updateOne(
+          {
+            _id: unlinkTagId,
+          },
+          {
+            $pull: {
+              linkedDevices: _id,
+            },
+          },
+        )
+        .exec();
+    }
+
+    const updatedDevice = await this.deviceModel.updateOne(
+      { _id },
+      {
+        linkedTags: [],
+        ...patchDeviceDto,
+      },
+    );
+
+    /* link new tags */
+    for await (const linkTagId of LINK_TAGS) {
+      this.deviceTagModel
+        .updateOne(
+          {
+            _id: linkTagId,
+          },
+          {
+            $push: {
+              linkedDevices: _id,
+            },
+          },
+        )
+        .exec();
+    }
+
+    if (updatedDevice.nModified !== 1) {
       throw new BadRequestException(
         'The device with that _id does not exist in the system. Please try another one.',
       );

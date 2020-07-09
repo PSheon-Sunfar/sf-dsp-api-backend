@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsArray } from 'class-validator';
 
 /**
  * Patch Device DTO Class
@@ -25,4 +25,14 @@ export class PatchDeviceDto {
   @IsString()
   @IsNotEmpty()
   displayName: string;
+
+  /**
+   * Linked Tags field
+   */
+  @ApiProperty({
+    required: true,
+  })
+  @IsOptional()
+  @IsArray()
+  linkedTags: Schema.Types.ObjectId[];
 }

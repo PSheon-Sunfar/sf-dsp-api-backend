@@ -6,7 +6,6 @@ import {
   Get,
   Post,
   Query,
-  Param,
   UseGuards,
 } from '@nestjs/common';
 import { PaginateResult } from 'mongoose';

@@ -20,6 +20,12 @@ export const DeviceSchema = new Schema(
       uppercase: true,
     },
     displayName: { type: String },
+    linkedTags: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'DeviceTag',
+      },
+    ],
     lastConnectionAt: {
       type: Date,
       default: new Date(),
@@ -49,6 +55,10 @@ export interface IDevice extends Document {
    * Display Name
    */
   readonly displayName: string;
+  /**
+   * Linked Tags
+   */
+  readonly linkedTags: Schema.Types.ObjectId[];
   /**
    * Last Connection
    */

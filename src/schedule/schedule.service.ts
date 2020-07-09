@@ -11,6 +11,7 @@ import { QueryDto } from '../utils/dto/query.dto';
 import { QuerySelfScheduleDto } from './dto/query_self_schedule.dto';
 import { CreateScheduleDto } from './dto/create_schedule.dto';
 import { PatchScheduleDto } from './dto/patch_schedule.dto';
+import { calcLinkAndUnlinkTags } from '../utils';
 import * as db from '../utils/db';
 
 /**
@@ -60,12 +61,12 @@ export class ScheduleService {
   ): Promise<any[] | []> {
     const allDeviceTag = await this.deviceTagModel
       .find()
-      .populate({ path: 'linkedDevice linkedSchedule' })
+      .populate({ path: 'linkedDevices linkedSchedules' })
       .exec();
 
     const found = allDeviceTag.filter(deviceTag => {
-      if (!deviceTag.linkedDevice.length) return false;
-      return deviceTag.linkedDevice.find(
+      if (!deviceTag.linkedDevices.length) return false;
+      return deviceTag.linkedDevices.find(
         (device: any) => device.macAddress === querySelfScheduleDto.macAddress,
       );
     });
@@ -73,7 +74,7 @@ export class ScheduleService {
     if (!found.length) {
       return found;
     } else {
-      return found[0].linkedSchedule;
+      return found[0].linkedSchedules;
     }
   }
 
@@ -85,7 +86,7 @@ export class ScheduleService {
   async getItems(queryDto: QueryDto): Promise<PaginateResult<QueryDto> | any> {
     const condition = await db.checkQueryString(queryDto);
     return await db.getItems(
-      { ...queryDto, populate: 'assignmentTags contents.content' },
+      { ...queryDto, populate: 'linkedTags contents.content' },
       this.scheduleModel,
       condition,
     );
@@ -107,14 +108,14 @@ export class ScheduleService {
    * @returns {Promise<IDeviceTag>} linked device tag data
    */
   linkTagToSchedule(
-    tagId: Schema.Types.ObjectId,
+    linkTagId: Schema.Types.ObjectId,
     scheduleId: Schema.Types.ObjectId,
   ): Promise<IDeviceTag> {
     return this.deviceTagModel
-      .findOneAndUpdate(
-        { _id: tagId },
+      .updateOne(
+        { _id: linkTagId },
         {
-          $push: { linkedSchedule: scheduleId },
+          $push: { linkedSchedules: scheduleId },
         },
         {
           new: true,
@@ -143,7 +144,8 @@ export class ScheduleService {
       ...createScheduleDto,
     });
 
-    for await (const tagId of createScheduleDto.assignmentTags) {
+    /* Link Tags */
+    for await (const tagId of createScheduleDto.linkedTags) {
       this.linkTagToSchedule(tagId, createdSchedule._id);
     }
 
@@ -157,10 +159,54 @@ export class ScheduleService {
    */
   async edit(patchScheduleDto: PatchScheduleDto): Promise<ISchedule> {
     const { _id } = patchScheduleDto;
-    const updatedSchedule = await this.scheduleModel.updateOne(
-      { _id },
-      patchScheduleDto,
+    const oldSchedule = await this.get(_id);
+    const [UNLINK_TAGS, LINK_TAGS] = calcLinkAndUnlinkTags(
+      oldSchedule.linkedTags,
+      patchScheduleDto.linkedTags || [],
     );
+
+    /* unlink old tags */
+    for await (const unlinkTagId of UNLINK_TAGS) {
+      this.deviceTagModel
+        .updateOne(
+          {
+            _id: unlinkTagId,
+          },
+          {
+            $pull: {
+              linkedSchedules: _id,
+            },
+          },
+        )
+        .exec();
+    }
+
+    const updatedSchedule = await this.scheduleModel.updateOne(
+      {
+        _id,
+      },
+      {
+        linkedTags: [],
+        ...patchScheduleDto,
+      },
+    );
+
+    /* link new tags */
+    for await (const linkTagId of LINK_TAGS) {
+      this.deviceTagModel
+        .updateOne(
+          {
+            _id: linkTagId,
+          },
+          {
+            $push: {
+              linkedSchedules: _id,
+            },
+          },
+        )
+        .exec();
+    }
+
     if (updatedSchedule.nModified !== 1) {
       throw new BadRequestException(
         'The schedule with that _id does not exist in the system. Please try another one.',

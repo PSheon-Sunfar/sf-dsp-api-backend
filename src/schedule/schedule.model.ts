@@ -18,11 +18,10 @@ export const ScheduleSchema = new Schema(
       },
       default: '',
     },
-    assignmentTags: [
+    linkedTags: [
       {
         type: Schema.Types.ObjectId,
         ref: 'DeviceTag',
-        default: undefined,
       },
     ],
     contents: [
@@ -70,7 +69,7 @@ export interface ISchedule extends Document {
   /**
    * Assignment Tags
    */
-  readonly assignmentTags: any;
+  readonly linkedTags: any;
   /**
    * Content List
    */

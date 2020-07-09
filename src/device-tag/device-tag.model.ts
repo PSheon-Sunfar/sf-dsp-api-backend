@@ -7,18 +7,16 @@ import * as mongoosePaginate from 'mongoose-paginate-v2';
 export const DeviceTagSchema = new Schema(
   {
     displayName: { type: String, required: true },
-    linkedDevice: [
+    linkedDevices: [
       {
         type: Schema.Types.ObjectId,
         ref: 'Device',
-        default: undefined,
       },
     ],
-    linkedSchedule: [
+    linkedSchedules: [
       {
         type: Schema.Types.ObjectId,
         ref: 'Schedule',
-        default: undefined,
       },
     ],
   },
@@ -45,9 +43,9 @@ export interface IDeviceTag extends Document {
   /**
    * Linked Device
    */
-  readonly linkedDevice: Schema.Types.ObjectId[];
+  readonly linkedDevices: Schema.Types.ObjectId[];
   /**
    * Linked Schedule
    */
-  readonly linkedSchedule: Schema.Types.ObjectId[];
+  readonly linkedSchedules: Schema.Types.ObjectId[];
 }

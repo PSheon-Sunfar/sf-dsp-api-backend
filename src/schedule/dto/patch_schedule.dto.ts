@@ -74,7 +74,7 @@ export class PatchScheduleDto {
   })
   @IsOptional()
   @IsArray()
-  assignmentTags: Schema.Types.ObjectId[];
+  linkedTags: Schema.Types.ObjectId[];
 
   /**
    * Content List field

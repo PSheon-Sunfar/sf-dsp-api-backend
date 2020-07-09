@@ -57,7 +57,7 @@ export class DeviceTagService {
   async getItems(queryDto: QueryDto): Promise<PaginateResult<QueryDto> | any> {
     const condition = await db.checkQueryString(queryDto);
     return await db.getItems(
-      { ...queryDto, populate: 'linkedDevice linkedSchedule' },
+      { ...queryDto, populate: 'linkedDevices linkedSchedules' },
       this.deviceTagModel,
       condition,
     );
@@ -76,14 +76,14 @@ export class DeviceTagService {
       .find({
         scheduleGroup: queryAvailableTagsDto.scheduleGroup,
       })
-      .select('assignmentTags')
+      .select('linkedTags')
       .exec();
 
     const ALL_TAGS = new Set(allTags.map(item => item._id.toString()));
     const USED_TAGS = usedTags.length
       ? new Set(
           usedTags
-            .map(item => item.assignmentTags)
+            .map(item => item.linkedTags)
             .reduce((a, b) => [...a, ...b])
             .map(item => item.toString()),
         )
