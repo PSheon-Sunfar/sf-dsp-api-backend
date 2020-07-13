@@ -23,7 +23,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        node-version: [12.x, 14.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -36,6 +36,5 @@ jobs:
         shell: bash
         run: |
           npm install
-          cp config/default.js config/ci.js
           npm run test:e2e --if-present
           npm run test:cov --if-present
