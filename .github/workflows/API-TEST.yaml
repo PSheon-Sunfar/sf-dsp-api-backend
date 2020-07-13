@@ -36,6 +36,6 @@ jobs:
         shell: bash
         run: |
           npm install
-          echo "$MONGO_URI"
+          cp config/default.ts config/test.ts
           npm run test:e2e --if-present
           npm run test:cov --if-present
