@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NODE_ENV: ci
+      NODE_ENV: test
       MONGO_URI: ${{ secrets.ci.MONGO_URI }}
       AZURE_STORAGE_SAS_KEY: ${{ secrets.ci.AZURE_STORAGE_SAS_KEY }}
       AZURE_STORAGE_ACCOUNT: ${{ secrets.ci.AZURE_STORAGE_ACCOUNT }}
