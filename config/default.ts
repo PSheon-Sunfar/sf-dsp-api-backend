@@ -2,7 +2,7 @@ module.exports = {
   // APP
   APP_URL: process.env.MONGO_URI || 'http://localhost',
 
-  // Azure Aervice
+  // Azure Service
   AZURE_STORAGE_SAS_KEY:
     process.env.AZURE_STORAGE_SAS_KEY || 'YOURAZURESTORAGEKEY',
   AZURE_STORAGE_ACCOUNT:

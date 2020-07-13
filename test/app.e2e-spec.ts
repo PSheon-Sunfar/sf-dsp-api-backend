@@ -25,7 +25,7 @@
 
 import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../src/modules/app/app.module';
+import { AppModule } from '../src/app/app.module';
 import { ValidationPipe } from '@nestjs/common';
 
 describe('AppController (e2e)', () => {
