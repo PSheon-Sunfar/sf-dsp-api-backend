@@ -15,11 +15,11 @@ jobs:
 
     env:
       NODE_ENV: test
-      MONGO_URI: ${{ secrets.CI.MONGO_URI }}
-      AZURE_STORAGE_SAS_KEY: ${{ secrets.CI.AZURE_STORAGE_SAS_KEY }}
-      AZURE_STORAGE_ACCOUNT: ${{ secrets.CI.AZURE_STORAGE_ACCOUNT }}
-      JWT_SECRET: ${{ secrets.CI.JWT_SECRET }}
-      ENCRYPT_JWT_SECRET: ${{ secrets.CI.ENCRYPT_JWT_SECRET }}
+      MONGO_URI: ${{ secrets.CI_MONGO_URI }}
+      AZURE_STORAGE_SAS_KEY: ${{ secrets.CI_AZURE_STORAGE_SAS_KEY }}
+      AZURE_STORAGE_ACCOUNT: ${{ secrets.CI_AZURE_STORAGE_ACCOUNT }}
+      JWT_SECRET: ${{ secrets.CI_JWT_SECRET }}
+      ENCRYPT_JWT_SECRET: ${{ secrets.CI_ENCRYPT_JWT_SECRET }}
 
     strategy:
       matrix:
