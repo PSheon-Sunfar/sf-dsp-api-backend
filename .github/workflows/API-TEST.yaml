@@ -36,5 +36,7 @@ jobs:
         shell: bash
         run: |
           npm install
+          cp config/default.ts config/test.ts
+          cp config/default.ts config/ci.ts
           npm run test:e2e --if-present
           npm run test:cov --if-present
