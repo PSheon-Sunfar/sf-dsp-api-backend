@@ -1,5 +1,6 @@
 import * as winston from 'winston';
 import * as rotateFile from 'winston-daily-rotate-file';
+import { TerminusModule } from '@nestjs/terminus';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -67,6 +68,7 @@ import { roles } from './app.roles';
             };
       },
     }),
+    TerminusModule,
     AccessControlModule.forRoles(roles),
     ConfigModule,
     AuthModule,
