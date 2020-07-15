@@ -10,8 +10,11 @@ import { ContentController } from './content.controller';
   imports: [
     MongooseModule.forFeature([{ name: 'Content', schema: ContentSchema }]),
     AzureStorageModule.withConfig({
-      sasKey: config.get('AZURE_STORAGE_SAS_KEY'),
-      accountName: config.get('AZURE_STORAGE_ACCOUNT'),
+      /* ANCHOR fitting azure app service */
+      sasKey:
+        process.env.AZURE_STORAGE_SAS_KEY ?? config['AZURE_STORAGE_SAS_KEY'],
+      accountName:
+        process.env.AZURE_STORAGE_ACCOUNT ?? config['AZURE_STORAGE_ACCOUNT'],
       containerName: 'dsp-demo-container',
     }),
   ],

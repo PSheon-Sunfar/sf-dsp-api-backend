@@ -1,5 +1,4 @@
 import * as config from 'config';
-import * as joi from '@hapi/joi';
 
 /**
  * Key-value mapping
@@ -23,6 +22,20 @@ export class ConfigService {
    */
   constructor() {
     this.envConfig = ConfigService.validateInput(config);
+    /* ANCHOR */
+    /* Fitting Azure App Service */
+    if (Object.entries(this.envConfig).length === 0) {
+      this.envConfig = Object.assign(this.envConfig, {
+        APP_URL: process.env.APP_URL,
+        MONGO_URI: process.env.MONGO_URI,
+        AZURE_STORAGE_SAS_KEY: process.env.AZURE_STORAGE_SAS_KEY,
+        AZURE_STORAGE_ACCOUNT: process.env.AZURE_STORAGE_ACCOUNT,
+        WEBTOKEN_SECRET_KEY: process.env.WEBTOKEN_SECRET_KEY,
+        JWT_SECRET: process.env.JWT_SECRET,
+        ENCRYPT_JWT_SECRET: process.env.ENCRYPT_JWT_SECRET,
+        WEBTOKEN_EXPIRATION_TIME: process.env.WEBTOKEN_EXPIRATION_TIME,
+      });
+    }
   }
 
   /**

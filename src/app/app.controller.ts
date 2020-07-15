@@ -1,5 +1,10 @@
 import { Controller, Req, Get, UseGuards } from '@nestjs/common';
-import { HealthCheckService, DNSHealthIndicator } from '@nestjs/terminus';
+import {
+  HealthCheckService,
+  DNSHealthIndicator,
+  HealthCheckResult,
+  HealthIndicatorResult,
+} from '@nestjs/terminus';
 import { AppService } from './app.service';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -41,10 +46,14 @@ export class AppController {
   @Get('/health')
   @ApiResponse({ status: 200, description: 'Request Received' })
   @ApiResponse({ status: 400, description: 'Request Failed' })
-  healthCheck(): any {
+  healthCheck(): Promise<HealthCheckResult> {
     // return this.appService.root();
     return this.health.check([
-      (): any => this.dns.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
+      (): Promise<HealthIndicatorResult> =>
+        this.dns.pingCheck(
+          'sf-dsp-mvp-api-dev.azurewebsites.net',
+          'https://sf-dsp-mvp-api-dev.azurewebsites.net',
+        ),
     ]);
   }
 
