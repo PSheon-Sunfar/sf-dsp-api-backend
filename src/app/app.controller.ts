@@ -27,6 +27,7 @@ export class AppController {
    * @returns {string} the application environment url
    */
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   @ApiResponse({ status: 200, description: 'Request Received' })
   @ApiResponse({ status: 400, description: 'Request Failed' })
   getString(): string {
