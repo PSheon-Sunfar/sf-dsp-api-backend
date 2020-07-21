@@ -15,9 +15,18 @@ jobs:
 
     env:
       NODE_ENV: test
-      MONGO_URI: ${{ secrets.CI_MONGO_URI }}
+      APP_URL: https://dsp-frontend.ap.ngrok.io
+      API_URL: https://sf-dsp-mvp-api-dev.azurewebsites.net
       AZURE_STORAGE_SAS_KEY: ${{ secrets.CI_AZURE_STORAGE_SAS_KEY }}
       AZURE_STORAGE_ACCOUNT: ${{ secrets.CI_AZURE_STORAGE_ACCOUNT }}
+      MONGO_URI: ${{ secrets.CI_MONGO_URI }}
+      WEBTOKEN_SECRET_KEY: ${{ secrets.CI_WEBTOKEN_SECRET_KEY }}
+      WEBTOKEN_EXPIRATION_TIME: ${{ secrets.CI_WEBTOKEN_EXPIRATION_TIME }}
+      GOOGLE_CLIENT_ID: ${{ secrets.CI_GOOGLE_CLIENT_ID }}
+      GOOGLE_SECRET: ${{ secrets.CI_GOOGLE_SECRET }}
+      AZURE_CLIENT_ID: ${{ secrets.CI_AZURE_CLIENT_ID }}
+      AZURE_SECRET: ${{ secrets.CI_AZURE_SECRET }}
+      AZURE_TENANT: ${{ secrets.CI_AZURE_TENANT }}
 
     strategy:
       matrix:
