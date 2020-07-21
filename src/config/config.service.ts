@@ -30,9 +30,9 @@ export class ConfigService {
         MONGO_URI: process.env.MONGO_URI,
         AZURE_STORAGE_SAS_KEY: process.env.AZURE_STORAGE_SAS_KEY,
         AZURE_STORAGE_ACCOUNT: process.env.AZURE_STORAGE_ACCOUNT,
+        GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+        GOOGLE_SECRET: process.env.GOOGLE_SECRET,
         WEBTOKEN_SECRET_KEY: process.env.WEBTOKEN_SECRET_KEY,
-        JWT_SECRET: process.env.JWT_SECRET,
-        ENCRYPT_JWT_SECRET: process.env.ENCRYPT_JWT_SECRET,
         WEBTOKEN_EXPIRATION_TIME: process.env.WEBTOKEN_EXPIRATION_TIME,
       });
     }

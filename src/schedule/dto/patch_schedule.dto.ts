@@ -10,6 +10,7 @@ import {
   ValidateNested,
   IsNumber,
   IsUrl,
+  IsIn,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -28,6 +29,13 @@ class ContentType {
   @IsNotEmpty()
   displayName: string;
 
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @IsIn(['image', 'video'])
+  fileType: 'image' | 'video';
+
+  @IsOptional()
   @IsNumber()
   interval: number;
 }

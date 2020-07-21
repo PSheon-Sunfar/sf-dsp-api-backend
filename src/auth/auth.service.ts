@@ -1,9 +1,22 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  InternalServerErrorException,
+  NotAcceptableException,
+} from '@nestjs/common';
+import { Priofile } from 'passport-google-oauth20';
 import { JwtService } from '@nestjs/jwt';
+import { sign } from 'jsonwebtoken';
 import { ConfigService } from '../config/config.service';
 import { ProfileService } from '../profile/profile.service';
 import { IProfile } from '../profile/profile.model';
 import { LoginDto } from './dto/login.dto';
+
+/* All 3-rd party providers */
+export enum Provider {
+  GOOGLE = 'google',
+  AZURE_AD = 'azureAD',
+}
 
 /**
  * Models a typical Login/Register route return body
@@ -47,6 +60,95 @@ export class AuthService {
   ) {
     this.expiration = this.configService.get('WEBTOKEN_EXPIRATION_TIME');
   }
+
+  /* ANCHOR */
+  async validateGoogleOAuthLogin(
+    thirdPartyProfile: Priofile,
+    provider: Provider,
+  ): Promise<string> {
+    try {
+      const registerDto = {
+        thirdPartyProvider: provider,
+        thirdPartyId: thirdPartyProfile.id,
+        email: thirdPartyProfile._json.email,
+        displayName: thirdPartyProfile._json.name,
+      };
+
+      const localExist = await this.profileService.getLocalByEmail(
+        registerDto.email,
+      );
+      if (localExist) {
+        return null;
+      }
+
+      let user: IProfile = await this.profileService.findOneByThirdPartyId(
+        registerDto.thirdPartyId,
+        provider,
+      );
+      if (!user) user = await this.profileService.createOAuthUser(registerDto);
+
+      const jwt: string = sign(
+        {
+          _id: user._id,
+          ...registerDto,
+        },
+        this.configService.get('WEBTOKEN_SECRET_KEY'),
+        {
+          expiresIn: this.configService.get('WEBTOKEN_EXPIRATION_TIME'),
+        },
+      );
+      return jwt;
+    } catch (err) {
+      throw new InternalServerErrorException(
+        'validateGoogleOAuthLogin',
+        err.message,
+      );
+    }
+  }
+  async validateAzureOAuthLogin(
+    thirdPartyProfile: Priofile,
+    provider: Provider,
+  ): Promise<string> {
+    try {
+      const registerDto = {
+        thirdPartyProvider: provider,
+        thirdPartyId: thirdPartyProfile.id,
+        email: thirdPartyProfile.email,
+        displayName: thirdPartyProfile.name,
+      };
+
+      const localExist = await this.profileService.getLocalByEmail(
+        registerDto.email,
+      );
+      if (localExist) {
+        return null;
+      }
+
+      let user: IProfile = await this.profileService.findOneByThirdPartyId(
+        registerDto.thirdPartyId,
+        provider,
+      );
+      if (!user) user = await this.profileService.createOAuthUser(registerDto);
+
+      const jwt: string = sign(
+        {
+          _id: user._id,
+          ...registerDto,
+        },
+        this.configService.get('WEBTOKEN_SECRET_KEY'),
+        {
+          expiresIn: this.configService.get('WEBTOKEN_EXPIRATION_TIME'),
+        },
+      );
+      return jwt;
+    } catch (err) {
+      throw new InternalServerErrorException(
+        'validateAzureOAuthLogin',
+        err.message,
+      );
+    }
+  }
+  /* ANCHOR */
 
   /**
    * Creates a signed jwt token based on IProfile dto

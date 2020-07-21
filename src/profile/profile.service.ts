@@ -7,7 +7,7 @@ import {
   NotAcceptableException,
 } from '@nestjs/common';
 import { IProfile } from './profile.model';
-import { RegisterDto } from '../auth/dto/register.dto';
+import { RegisterDto, RegisterThirdPartyDto } from '../auth/dto/register.dto';
 import { AppRoles } from '../app/app.roles';
 import { QueryDto } from '../utils/dto/query.dto';
 import { PatchProfileDto, PatchProfileRoleDto } from './dto/patch_profile.dto';
@@ -62,6 +62,45 @@ export class ProfileService {
    */
   getByEmail(email: string): Promise<IProfile> {
     return this.profileModel.findOne({ email }).exec();
+  }
+
+  /**
+   * Fetches a local profile from database by email
+   * @param {string} email
+   * @returns {Promise<IProfile>} queried profile data
+   */
+  getLocalByEmail(email: string): Promise<IProfile> {
+    return this.profileModel
+      .findOne({ email, thirdPartyProvider: 'local' })
+      .exec();
+  }
+
+  /**
+   * Fetches a profile from database by third party id
+   * @param {string} thirdPartyId
+   * @returns {Promise<IProfile>} queried profile data
+   */
+  findOneByThirdPartyId(
+    thirdPartyId: string,
+    thirdPartyProvider: string,
+  ): Promise<IProfile> {
+    return this.profileModel
+      .findOne({ thirdPartyProvider, thirdPartyId })
+      .exec();
+  }
+
+  /**
+   * Register User with Third Party Channel
+   * @param {RegisterThirdPartyDto} registerDto profile payload
+   * @returns {Promise<IProfile>} queried profile data
+   */
+  createOAuthUser(registerDto: RegisterThirdPartyDto): Promise<IProfile> {
+    const createdProfile = new this.profileModel({
+      ...registerDto,
+      roles: AppRoles.USER,
+    });
+
+    return createdProfile.save();
   }
 
   /**

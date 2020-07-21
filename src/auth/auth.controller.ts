@@ -1,9 +1,20 @@
-import { Controller, Body, Post } from '@nestjs/common';
+import {
+  Controller,
+  Body,
+  Req,
+  Get,
+  Post,
+  UseGuards,
+  Res,
+} from '@nestjs/common';
+import { Response } from 'express';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService, ITokenReturnBody } from './auth.service';
+import { ProfileService } from '../profile/profile.service';
+import { ConfigService } from '../config/config.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { ProfileService } from '../profile/profile.service';
 
 /**
  * Authentication Controller
@@ -13,10 +24,12 @@ import { ProfileService } from '../profile/profile.service';
 export class AuthController {
   /**
    * Constructor
+   * @param {ConfigService} configService config service
    * @param {AuthService} authService authentication service
    * @param {ProfileService} profileService profile service
    */
   constructor(
+    private readonly configService: ConfigService,
     private readonly authService: AuthService,
     private readonly profileService: ProfileService,
   ) {}
@@ -32,6 +45,47 @@ export class AuthController {
   async login(@Body() loginDto: LoginDto): Promise<ITokenReturnBody> {
     const user = await this.authService.validateUser(loginDto);
     return await this.authService.createToken(user);
+  }
+
+  /* Google Oauth login */
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  googleLogin(): void {
+    // initiates the Google OAuth2 login flow
+  }
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  googleLoginCallback(@Req() req: any, @Res() res: Response): void {
+    // handles the Google OAuth2 callback
+    const jwt: string = req.user.jwt;
+    // console.log('jwt, ', jwt);
+    if (jwt)
+      res.redirect(
+        302,
+        `${this.configService.get('APP_URL')}/login/success/${jwt}`,
+      );
+    else
+      res.redirect(302, `${this.configService.get('APP_URL')}/login/failure`);
+  }
+  /* Azure Oauth login */
+  @Get('azureAd')
+  @UseGuards(AuthGuard('azure_ad'))
+  azureADLogin(): void {
+    // initiates the Google OAuth2 login flow
+  }
+  @Get('azureAd/callback')
+  @UseGuards(AuthGuard('azure_ad'))
+  azureADLoginCallback(@Req() req: any, @Res() res: Response): void {
+    // handles the Azure AD OAuth2 callback
+    const jwt: string = req.user.jwt;
+    // console.log('jwt, ', jwt);
+    if (jwt)
+      res.redirect(
+        302,
+        `${this.configService.get('APP_URL')}/login/success/${jwt}`,
+      );
+    else
+      res.redirect(302, `${this.configService.get('APP_URL')}/login/failure`);
   }
 
   /**

@@ -7,10 +7,15 @@ import * as mongoosePaginate from 'mongoose-paginate-v2';
  */
 export const ProfileSchema = new Schema(
   {
+    thirdPartyProvider: {
+      type: String,
+      enum: ['google', 'azureAD', 'local'],
+      default: 'local',
+    },
+    thirdPartyId: { type: String, default: null },
     email: { type: String, required: true },
     password: {
       type: String,
-      required: true,
       select: false,
     },
     displayName: { type: String, required: true },
@@ -32,6 +37,14 @@ export interface IProfile extends Document {
    * UUID
    */
   readonly _id: Schema.Types.ObjectId;
+  /**
+   * Third Party Provider
+   */
+  readonly thirdPartyProvider: string;
+  /**
+   * Third Party Id
+   */
+  readonly thirdPartyId: string;
   /**
    * Display Name
    */

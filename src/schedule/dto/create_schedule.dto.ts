@@ -9,6 +9,7 @@ import {
   ValidateNested,
   IsNumber,
   IsUrl,
+  IsIn,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -26,6 +27,14 @@ class ContentType {
   @IsString()
   @IsNotEmpty()
   displayName: string;
+
+  @ApiProperty({
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  @IsIn(['image', 'video'])
+  fileType: 'image' | 'video';
 
   @IsNumber()
   interval: number;

@@ -40,7 +40,6 @@ export class ScheduleController {
    * @returns {PaginateResult<QueryDto>} queried schedule data
    */
   @Get('schedule/:macAddress')
-  @UseGuards(AuthGuard('jwt'))
   @ApiResponse({ status: 200, description: 'Fetch Schedule Request Received' })
   @ApiResponse({ status: 400, description: 'Fetch Schedule Request Failed' })
   async getScheduleViaMacAddress(
