@@ -7,9 +7,10 @@ import {
   IsArray,
   IsBooleanString,
   ValidateNested,
-  IsNumber,
+  IsNumberString,
   IsUrl,
   IsIn,
+  IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -17,6 +18,11 @@ class ContentType {
   @IsString()
   @IsUrl()
   contentURL: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUrl()
+  attachmentURL: string;
 
   /**
    * Display Name field
@@ -36,7 +42,8 @@ class ContentType {
   @IsIn(['image', 'video'])
   fileType: 'image' | 'video';
 
-  @IsNumber()
+  @IsOptional()
+  @IsNumberString()
   interval: number;
 }
 

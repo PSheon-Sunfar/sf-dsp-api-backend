@@ -36,13 +36,22 @@ export const ScheduleSchema = new Schema(
           },
           required: true,
         },
+        attachmentURL: {
+          type: String,
+          validate: {
+            validator: (v: string): boolean => {
+              return validator.isURL(v);
+            },
+            message: 'NOT_A_VALID_ATTACHMENT_URL',
+          },
+        },
         displayName: { type: String, required: true },
         fileType: {
           type: String,
           enum: ['image', 'video'],
           required: true,
         },
-        interval: { type: Number, default: 5 },
+        interval: { type: Number },
       },
     ],
     published: { type: Boolean, default: false },

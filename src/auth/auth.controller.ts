@@ -47,46 +47,61 @@ export class AuthController {
     return await this.authService.createToken(user);
   }
 
+  // /**
+  //  * Login Azure AD route to validate and create tokens for users
+  //  * @param {string} accessToken the login dto
+  //  */
+  // @Post('login/azureAD')
+  // @ApiResponse({ status: 201, description: 'Login Completed' })
+  // @ApiResponse({ status: 400, description: 'Bad Request' })
+  // @ApiResponse({ status: 401, description: 'Unauthorized' })
+  // async getValidTokenWithAzureAccessToken(
+  //   @Body('accessToken') accessToken: string,
+  // ): Promise<void> {
+  //   // verify azure access token
+  //   console.log('accessToken, ', accessToken);
+  // }
+
   /* Google Oauth login */
-  @Get('google')
-  @UseGuards(AuthGuard('google'))
-  googleLogin(): void {
-    // initiates the Google OAuth2 login flow
-  }
-  @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
-  googleLoginCallback(@Req() req: any, @Res() res: Response): void {
-    // handles the Google OAuth2 callback
-    const jwt: string = req.user.jwt;
-    // console.log('jwt, ', jwt);
-    if (jwt)
-      res.redirect(
-        302,
-        `${this.configService.get('APP_URL')}/login/success/${jwt}`,
-      );
-    else
-      res.redirect(302, `${this.configService.get('APP_URL')}/login/failure`);
-  }
-  /* Azure Oauth login */
-  @Get('azureAd')
-  @UseGuards(AuthGuard('azure_ad'))
-  azureADLogin(): void {
-    // initiates the Google OAuth2 login flow
-  }
-  @Get('azureAd/callback')
-  @UseGuards(AuthGuard('azure_ad'))
-  azureADLoginCallback(@Req() req: any, @Res() res: Response): void {
-    // handles the Azure AD OAuth2 callback
-    const jwt: string = req.user.jwt;
-    // console.log('jwt, ', jwt);
-    if (jwt)
-      res.redirect(
-        302,
-        `${this.configService.get('APP_URL')}/login/success/${jwt}`,
-      );
-    else
-      res.redirect(302, `${this.configService.get('APP_URL')}/login/failure`);
-  }
+  // @Get('google')
+  // @UseGuards(AuthGuard('google'))
+  // googleLogin(): void {
+  //   // initiates the Google OAuth2 login flow
+  // }
+  // @Get('google/callback')
+  // @UseGuards(AuthGuard('google'))
+  // googleLoginCallback(@Req() req: any, @Res() res: Response): void {
+  //   // handles the Google OAuth2 callback
+  //   const jwt: string = req.user.jwt;
+  //   // console.log('jwt, ', jwt);
+  //   if (jwt)
+  //     res.redirect(
+  //       302,
+  //       `${this.configService.get('APP_URL')}/login/success/${jwt}`,
+  //     );
+  //   else
+  //     res.redirect(302, `${this.configService.get('APP_URL')}/login/failure`);
+  // }
+  // /* Azure Oauth login */
+  // @Get('azureAd')
+  // @UseGuards(AuthGuard('azure_ad'))
+  // azureADLogin(): void {
+  //   // initiates the Google OAuth2 login flow
+  // }
+  // @Get('azureAd/callback')
+  // @UseGuards(AuthGuard('azure_ad'))
+  // azureADLoginCallback(@Req() req: any, @Res() res: Response): void {
+  //   // handles the Azure AD OAuth2 callback
+  //   const jwt: string = req.user.jwt;
+  //   // console.log('jwt, ', jwt);
+  //   if (jwt)
+  //     res.redirect(
+  //       302,
+  //       `${this.configService.get('APP_URL')}/login/success/${jwt}`,
+  //     );
+  //   else
+  //     res.redirect(302, `${this.configService.get('APP_URL')}/login/failure`);
+  // }
 
   /**
    * Registration route to create and generate tokens for users

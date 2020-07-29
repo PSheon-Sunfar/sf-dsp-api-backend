@@ -2,11 +2,13 @@ import { Model, Schema, PaginateResult } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { IDevice } from './device.model';
+import { IDeviceAccess } from './device-access.model';
 import { IDeviceTag } from '../device-tag/device-tag.model';
 import { QueryDto } from '../utils/dto/query.dto';
 import { PatchDeviceDto } from './dto/patch_device.dto';
 import { calcLinkAndUnlinkTags } from '../utils';
 import * as db from '../utils/db';
+import { cpuUsage } from 'process';
 
 /**
  * Models a typical response for a crud operation
@@ -30,6 +32,8 @@ export class DeviceService {
   constructor(
     @InjectModel('Device')
     private readonly deviceModel: Model<IDevice>,
+    @InjectModel('DeviceAccess')
+    private readonly deviceAccessModel: Model<IDeviceAccess>,
     @InjectModel('DeviceTag')
     private readonly deviceTagModel: Model<IDeviceTag>,
   ) {}
@@ -41,6 +45,42 @@ export class DeviceService {
    */
   get(_id: Schema.Types.ObjectId): Promise<IDevice> {
     return this.deviceModel.findById(_id).exec();
+  }
+
+  /**
+   * Fetches a device from database by MAC Address
+   * @body {string} macAddress
+   * @returns {PaginateResult<QueryDto>} queried devices data
+   */
+  async getItemAnalysis(
+    macAddress: string,
+  ): Promise<PaginateResult<QueryDto> | any> {
+    const a = await this.deviceAccessModel.find({
+      createdAt: {
+        $gte: new Date(new Date().setDate(new Date().getDate() - 1)),
+      },
+    });
+    console.log('a, ', a);
+    const result = await this.deviceAccessModel.aggregate([
+      {
+        $match: {
+          macAddress,
+        },
+        $gte: [
+          '$createdAt',
+          new Date(new Date().setDate(new Date().getDate() - 1)),
+        ],
+      },
+      {
+        $group: {
+          _id: '$macAddress',
+          averageCPU: { $avg: '$cpuUsage' },
+          averageMemory: { $avg: '$memoryUsage' },
+        },
+      },
+    ]);
+    console.log('result, ', result);
+    return await this.deviceAccessModel.find({ macAddress });
   }
 
   /**

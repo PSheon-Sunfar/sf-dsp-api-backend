@@ -6,8 +6,8 @@ import { ConfigService } from '../config/config.service';
 import { ProfileModule } from '../profile/profile.module';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { AzureADStrategy } from './strategies/azureAD.strategy';
-import { GoogleStrategy } from './strategies/google.strategy';
+// import { AzureADStrategy } from './strategies/azureAD.strategy';
+// import { GoogleStrategy } from './strategies/google.strategy';
 import { AuthController } from './auth.controller';
 
 @Module({
@@ -35,7 +35,8 @@ import { AuthController } from './auth.controller';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, AzureADStrategy, GoogleStrategy],
+  // providers: [AuthService, JwtStrategy, AzureADStrategy, GoogleStrategy],
+  providers: [AuthService, JwtStrategy],
   exports: [PassportModule.register({ defaultStrategy: 'jwt' })],
 })
 export class AuthModule {}

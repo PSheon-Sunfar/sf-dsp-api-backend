@@ -8,7 +8,7 @@ import {
   Matches,
   IsBooleanString,
   ValidateNested,
-  IsNumber,
+  IsNumberString,
   IsUrl,
   IsIn,
 } from 'class-validator';
@@ -18,6 +18,11 @@ class ContentType {
   @IsString()
   @IsUrl()
   contentURL: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUrl()
+  attachmentURL: string;
 
   /**
    * Display Name field
@@ -36,7 +41,7 @@ class ContentType {
   fileType: 'image' | 'video';
 
   @IsOptional()
-  @IsNumber()
+  @IsNumberString()
   interval: number;
 }
 

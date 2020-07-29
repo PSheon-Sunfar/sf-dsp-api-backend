@@ -32,7 +32,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     done,
   ) {
     try {
-      // console.log(profile);
+      console.log(profile);
 
       const jwt: string = await this.authService.validateGoogleOAuthLogin(
         profile,

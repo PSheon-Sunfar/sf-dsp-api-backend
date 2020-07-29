@@ -38,6 +38,32 @@ export class DeviceController {
   ) {}
 
   /**
+   * Retrieves single device status
+   * @query given device address to fetch
+   * @returns {} queried device data
+   */
+  @Get('device')
+  @UseGuards(AuthGuard('jwt'), ACGuard)
+  @UseRoles({
+    resource: 'device',
+    action: 'read',
+    possession: 'any',
+  })
+  @ApiResponse({ status: 200, description: 'Fetch Device Request Received' })
+  @ApiResponse({ status: 400, description: 'Fetch Device Request Failed' })
+  async getDeviceStatus(
+    @Body('macAddress') macAddress: string,
+  ): Promise<PaginateResult<QueryDto>> {
+    const device = await this.deviceService.getItemAnalysis(macAddress);
+    if (!device) {
+      throw new BadRequestException(
+        'The device with that query could not be found.',
+      );
+    }
+    return device;
+  }
+
+  /**
    * Retrieves all device
    * @query given filter to fetch
    * @returns {PaginateResult<QueryDto>} queried device data
