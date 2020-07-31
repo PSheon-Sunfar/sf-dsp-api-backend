@@ -1,4 +1,3 @@
-import { Schema } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, Matches } from 'class-validator';
 

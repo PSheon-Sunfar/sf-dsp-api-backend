@@ -17,6 +17,7 @@ import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ScheduleService, IGenericMessageBody } from './schedule.service';
 import { QueryDto } from '../utils/dto/query.dto';
 import { QuerySelfScheduleDto } from './dto/query_self_schedule.dto';
+import { QueryScheduleDto } from './dto/query_schedule.dto';
 import { CreateScheduleDto } from './dto/create_schedule.dto';
 import { PatchScheduleDto } from './dto/patch_schedule.dto';
 import { ISchedule } from './schedule.model';
@@ -35,6 +36,27 @@ export class ScheduleController {
   constructor(private readonly scheduleService: ScheduleService) {}
 
   /**
+   * Retrieves schedule data via schedule id
+   * @param queryScheduleDto the schedule id
+   * @returns {ISchedule} queried schedule data
+   */
+  @Get('schedule/:scheduleId')
+  @ApiResponse({ status: 200, description: 'Fetch Schedule Request Received' })
+  @ApiResponse({ status: 400, description: 'Fetch Schedule Request Failed' })
+  async getScheduleViaScheduleId(
+    @Param() queryScheduleDto: QueryScheduleDto,
+  ): Promise<ISchedule> {
+    const schedule = await this.scheduleService.get(
+      queryScheduleDto.scheduleId,
+    );
+    if (!schedule) {
+      throw new BadRequestException(
+        'The schedule with that schedule id could not be found.',
+      );
+    }
+    return schedule;
+  }
+  /**
    * Retrieves self schedule data via mac address
    * @param macAddress the uniq mac address
    * @returns {PaginateResult<QueryDto>} queried schedule data
@@ -44,7 +66,6 @@ export class ScheduleController {
   @ApiResponse({ status: 400, description: 'Fetch Schedule Request Failed' })
   async getScheduleViaMacAddress(
     @Param() querySelfScheduleDto: QuerySelfScheduleDto,
-    // ): Promise<ISchedule> {
   ): Promise<any> {
     const schedule = await this.scheduleService.getSelfItem(
       querySelfScheduleDto,
