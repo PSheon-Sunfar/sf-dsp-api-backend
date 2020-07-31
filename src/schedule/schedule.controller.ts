@@ -40,11 +40,11 @@ export class ScheduleController {
    * @param queryScheduleDto the schedule id
    * @returns {ISchedule} queried schedule data
    */
-  @Get('schedule/:scheduleId')
+  @Get('schedule')
   @ApiResponse({ status: 200, description: 'Fetch Schedule Request Received' })
   @ApiResponse({ status: 400, description: 'Fetch Schedule Request Failed' })
   async getScheduleViaScheduleId(
-    @Param() queryScheduleDto: QueryScheduleDto,
+    @Body() queryScheduleDto: QueryScheduleDto,
   ): Promise<ISchedule> {
     const schedule = await this.scheduleService.get(
       queryScheduleDto.scheduleId,
