@@ -89,7 +89,8 @@ export class CreateScheduleDto {
     required: true,
   })
   // @IsArray()
-  @ValidateNested({ each: true })
+  @IsOptional()
+  @ValidateNested()
   @Type(() => ContentType)
   contents: ContentType[];
 
@@ -99,7 +100,7 @@ export class CreateScheduleDto {
   @ApiProperty({
     required: true,
   })
-  @IsBooleanString()
   @IsNotEmpty()
+  @IsBooleanString()
   published: boolean;
 }

@@ -91,11 +91,10 @@ export class ScheduleController {
   @ApiResponse({ status: 201, description: 'Create Completed' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async register(
+  async createSchedule(
     @Body() createScheduleDto: CreateScheduleDto,
   ): Promise<ISchedule> {
-    const schedule = await this.scheduleService.create(createScheduleDto);
-    return schedule;
+    return await this.scheduleService.create(createScheduleDto);
   }
 
   /**
