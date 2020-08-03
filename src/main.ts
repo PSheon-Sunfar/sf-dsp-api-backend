@@ -43,8 +43,4 @@ async function bootstrap() {
   await app.listen(process.env.PORT || 3000);
 }
 
-try {
-  bootstrap();
-} catch (err) {
-  throw new Error(err);
-}
+bootstrap();
