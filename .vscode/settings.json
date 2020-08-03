@@ -8,5 +8,7 @@
   "appService.zipIgnorePattern": [
     "node_modules{,/**}",
     ".vscode{,/**}"
-  ]
+  ],
+  "appService.defaultWebAppToDeploy": "/subscriptions/0a08491d-296c-479d-82d8-fd3ea04bafae/resourceGroups/sf-rg-dsp-mvp-app/providers/Microsoft.Web/sites/sf-dsp-mvp-api-prod",
+  "appService.deploySubpath": "."
 }
