@@ -28,22 +28,22 @@ export const ScheduleSchema = new Schema(
       {
         contentURL: {
           type: String,
-          validate: {
-            validator: (v: string): boolean => {
-              return validator.isURL(v);
-            },
-            message: 'NOT_A_VALID_URL',
-          },
+          // validate: {
+          //   validator: (v: string): boolean => {
+          //     return validator.isURL(v);
+          //   },
+          //   message: 'NOT_A_VALID_URL',
+          // },
           required: true,
         },
         attachmentURL: {
           type: String,
-          validate: {
-            validator: (v: string): boolean => {
-              return validator.isURL(v);
-            },
-            message: 'NOT_A_VALID_ATTACHMENT_URL',
-          },
+          // validate: {
+          //   validator: (v: string): boolean => {
+          //     return validator.isURL(v);
+          //   },
+          //   message: 'NOT_A_VALID_ATTACHMENT_URL',
+          // },
         },
         displayName: { type: String, required: true },
         fileType: {

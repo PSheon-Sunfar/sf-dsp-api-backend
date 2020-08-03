@@ -21,12 +21,12 @@ export const ContentSchema = new Schema(
     },
     uri: {
       type: String,
-      validate: {
-        validator(v: string): boolean {
-          return v === '' ? true : validator.isURL(v);
-        },
-        message: 'CONTENT_URI_NOT_A_VALID_URL',
-      },
+      // validate: {
+      //   validator(v: string): boolean {
+      //     return v === '' ? true : validator.isURL(v);
+      //   },
+      //   message: 'CONTENT_URI_NOT_A_VALID_URL',
+      // },
       lowercase: true,
     },
   },
